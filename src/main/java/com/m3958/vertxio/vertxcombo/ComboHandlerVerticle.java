@@ -89,7 +89,7 @@ public class ComboHandlerVerticle extends Verticle {
                   ConcurrentSharedMap<String, Buffer> fbuffers =
                       vertx.sharedData().getMap(ComboHandlerVerticle.sharedMapName);
                   long bufLength = 0;
-                  for (Path fp : fefr.getFiles()) {
+                  for (VersionedFile fp : fefr.getFiles()) {
                     Buffer bf = fbuffers.get(fp.toString());
                     resp.write(bf);
                     bufLength += bf.length();

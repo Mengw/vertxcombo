@@ -29,6 +29,8 @@ public class YuiStyleUrl implements UrlStyle {
   public ExtractFileResult extractFiles(String url) {
     
     int qidx = url.indexOf('?');
+    // /combo/version?
+    String version = url.substring(0, qidx);
     
     String[] fns = url.substring(qidx + 1).split("&");
     
@@ -52,7 +54,7 @@ public class YuiStyleUrl implements UrlStyle {
         return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
       }
     }
-    return new ExtractFileResult(sanitizedPathes).setMimeType();
+    return new ExtractFileResult(sanitizedPathes,version).setMimeType();
   }
 
   @Override

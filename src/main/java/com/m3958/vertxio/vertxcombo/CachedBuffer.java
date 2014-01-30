@@ -14,13 +14,13 @@ public class CachedBuffer {
 	
 	private Vertx vertx;
 	
-	private Path[] files;
+	private VersionedFile[] files;
 	
 	private int currentIndex = 0;
 	
 	private Handler<AsyncResult<Void>> doneCb;
 	
-	public CachedBuffer(Vertx vertx,Handler<AsyncResult<Void>> doneCb,Path comboDiskRootPath,Path...infiles){
+	public CachedBuffer(Vertx vertx,Handler<AsyncResult<Void>> doneCb,Path comboDiskRootPath,VersionedFile...infiles){
 		this.vertx = vertx;
 		this.doneCb = doneCb;
 		this.setComboDiskRootPath(comboDiskRootPath);
@@ -32,7 +32,7 @@ public class CachedBuffer {
 		pumpOne();
 	}
 	
-	private Path nextfile(){
+	private VersionedFile nextfile(){
 		if(this.files.length > currentIndex){
 			return this.files[currentIndex++];
 		}else{
@@ -42,7 +42,7 @@ public class CachedBuffer {
 	
 	
 	private void pumpOne(){
-		final Path  infstr = nextfile();
+		final VersionedFile  infstr = nextfile();
 		ConcurrentSharedMap<String, Buffer> fbuffers = vertx.sharedData().getMap(ComboHandlerVerticle.sharedMapName);
 		
 		if(infstr == null){
@@ -52,7 +52,7 @@ public class CachedBuffer {
 				pumpOne();
 				return;
 			}
-			Path infPath = this.getComboDiskRootPath().resolve(infstr);
+			Path infPath = this.getComboDiskRootPath().resolve(infstr.getFile());
 			Buffer bf = null;
 			try {
 				bf = vertx.fileSystem().readFileSync(infPath.toString());

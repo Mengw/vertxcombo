@@ -2,6 +2,7 @@ package com.m3958.vertxio.vertxcombo;
 
 import java.nio.file.Path;
 
+
 public class ExtractFileResult {
 
   public static String MIME_TYPES_JS = "application/javascript";
@@ -13,8 +14,9 @@ public class ExtractFileResult {
     DISK_ROOT_ERROR, COMBO_BASE_ERROR,
       FILE_NOT_FOUND, URL_PATTERN_ERROR, SUCCESS,UNKNOWN_MIMETYPE
   }
+  
 
-  private Path[] files;
+  private VersionedFile[] files;
 
   private String etag;
 
@@ -22,9 +24,18 @@ public class ExtractFileResult {
   
   private String mimeType;
 
+  private String version;
 
-  public ExtractFileResult(Path[] files) {
+  public ExtractFileResult(VersionedFile[] files,String version) {
     this.setFiles(files);
+    this.setStatus(ResultStatus.SUCCESS);
+  }
+  
+  public ExtractFileResult(Path[] paths,String version) {
+    this.files = new VersionedFile[paths.length];
+    for(int idx=0;idx<paths.length;idx++){
+      this.files[idx] = new VersionedFile(paths[idx], version);
+    }
     this.setStatus(ResultStatus.SUCCESS);
   }
 
@@ -41,11 +52,11 @@ public class ExtractFileResult {
   }
 
 
-  public Path[] getFiles() {
+  public VersionedFile[] getFiles() {
     return files;
   }
 
-  public void setFiles(Path[] files) {
+  public void setFiles(VersionedFile[] files) {
     this.files = files;
   }
 
@@ -65,7 +76,7 @@ public class ExtractFileResult {
     if(getFiles() == null || getFiles().length == 0){
       setStatus(ResultStatus.FILE_NOT_FOUND);
     }else{
-      String fn = getFiles()[0].getFileName().toString();
+      String fn = getFiles()[0].getFile().getFileName().toString();
       int idx = fn.lastIndexOf('.');
       String ext = idx == -1 ? "" : fn.substring(idx);
       if(".js".equalsIgnoreCase(ext)){
@@ -81,8 +92,16 @@ public class ExtractFileResult {
     }
     return this;
   }
-
+  
   public void setMimeType(String mimeType) {
     this.mimeType = mimeType;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 }

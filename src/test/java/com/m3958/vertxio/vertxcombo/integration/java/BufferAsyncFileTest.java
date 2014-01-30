@@ -35,6 +35,7 @@ import com.m3958.vertxio.vertxcombo.ComboHandlerVerticle;
 import com.m3958.vertxio.vertxcombo.ExtractFileResult;
 import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
 import com.m3958.vertxio.vertxcombo.UrlStyle;
+import com.m3958.vertxio.vertxcombo.VersionedFile;
 
 
 /**
@@ -62,7 +63,7 @@ public class BufferAsyncFileTest extends TestVerticle {
         if (event.succeeded()) {
           ConcurrentSharedMap<String, Buffer> fbuffers = vertx.sharedData().getMap(ComboHandlerVerticle.sharedMapName);
           assertEquals(10,fbuffers.size());
-          for(Path p: efr.getFiles()){
+          for(VersionedFile p: efr.getFiles()){
             assertTrue(fbuffers.containsKey(p.toString()));
             container.logger().info(p.toString());
           }

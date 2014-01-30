@@ -31,7 +31,7 @@ public class MinifyStyleUrl implements UrlStyle {
     String[] segs = url.split("&");
     String b = null;
     String f = null;
-    String cachedigital = null;
+    String version = null;
     char fsep = File.separatorChar;
     char unwantedFsep = fsep == '/' ? '\\' : '/';
 
@@ -43,12 +43,16 @@ public class MinifyStyleUrl implements UrlStyle {
       } else if (seg.startsWith("f=")) {
         f = seg;
       } else {
-        cachedigital = seg;
+        version = seg;
       }
     }
 
     if (f == null) {
       return new ExtractFileResult(ExtractFileResult.ResultStatus.URL_PATTERN_ERROR);
+    }
+    
+    if(version == null){
+      version = "1";
     }
 
     int start = f.startsWith("f=") ? 2 : 7;
@@ -92,7 +96,7 @@ public class MinifyStyleUrl implements UrlStyle {
       }
     }
 
-    return new ExtractFileResult(afterBaseAppend).setMimeType();
+    return new ExtractFileResult(afterBaseAppend,version).setMimeType();
   }
 
   @Override
