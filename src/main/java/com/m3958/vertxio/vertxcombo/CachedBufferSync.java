@@ -16,9 +16,9 @@ public class CachedBufferSync {
 
   private VersionedFile[] files;
 
-  private int currentIndex = 0;
-
   private Handler<AsyncResult<Void>> doneCb;
+
+  private ConcurrentSharedMap<String, Buffer> fbuffers;
 
   public CachedBufferSync(Vertx vertx, Handler<AsyncResult<Void>> doneCb, Path comboDiskRootPath,
       VersionedFile... infiles) {
@@ -26,50 +26,45 @@ public class CachedBufferSync {
     this.doneCb = doneCb;
     this.setComboDiskRootPath(comboDiskRootPath);
     this.files = infiles;
+    this.fbuffers = vertx.sharedData().getMap(ComboHandlerVerticle.VERSIONED_FILE_MAP_NAME);
   }
 
 
-  public void pump() {
-    pumpOne();
-  }
-
-  private VersionedFile nextfile() {
-    if (this.files.length > currentIndex) {
-      return this.files[currentIndex++];
-    } else {
-      return null;
+  public void startRead() {
+    if (this.files.length == 0) {
+      doneCb.handle(new VoidAsyncResult(false));
+      return;
     }
-  }
 
-
-  private void pumpOne() {
-    final VersionedFile infstr = nextfile();
-    ConcurrentSharedMap<String, Buffer> fbuffers =
-        vertx.sharedData().getMap(ComboHandlerVerticle.VERSIONED_FILE_MAP_NAME);
-
-    if (infstr == null) {
-      doneCb.handle(new VoidAsyncResult(true));
-    } else {
-      if (fbuffers.containsKey(infstr)) {
-        pumpOne();
+    boolean success;
+    for (VersionedFile vf : files) {
+      success = readOne(vf);
+      if (!success) {
+        doneCb.handle(new VoidAsyncResult(false));
         return;
       }
-      Path infPath = this.getComboDiskRootPath().resolve(infstr.getFile());
-      Buffer bf = null;
-      try {
-        bf = vertx.fileSystem().readFileSync(infPath.toString());
-      } catch (Exception e) {
-
-      }
-      if (bf == null) {
-        doneCb.handle(new VoidAsyncResult(false));
-      } else {
-        fbuffers.put(infstr.toString(), bf);
-        pumpOne();
-      }
     }
+    doneCb.handle(new VoidAsyncResult(true));
   }
 
+  private boolean readOne(VersionedFile vf) {
+    if (fbuffers.containsKey(vf.toString())) {
+      return true;
+    }
+    Path infPath = this.getComboDiskRootPath().resolve(vf.getFile());
+    Buffer bf = null;
+    try {
+      bf = vertx.fileSystem().readFileSync(infPath.toString());
+    } catch (Exception e) {
+
+    }
+    if (bf == null) {
+      return false;
+    } else {
+      fbuffers.put(vf.toString(), bf);
+      return true;
+    }
+  }
 
   public Path getComboDiskRootPath() {
     return comboDiskRootPath;

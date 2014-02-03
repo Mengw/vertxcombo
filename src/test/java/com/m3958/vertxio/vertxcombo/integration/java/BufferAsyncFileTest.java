@@ -73,7 +73,7 @@ public class BufferAsyncFileTest extends TestVerticle {
         }
         testComplete();
       }
-    }, comboDiskRootPath, efr.getFiles()).pump();
+    }, comboDiskRootPath, efr.getFiles()).startRead();
   }
 
   @Override
