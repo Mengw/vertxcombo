@@ -3,13 +3,10 @@ package com.m3958.vertxio.vertxcombo;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Handler;
-import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.HttpServerResponse;
 import org.vertx.java.core.json.JsonObject;
-import org.vertx.java.core.shareddata.ConcurrentSharedMap;
 import org.vertx.java.platform.Verticle;
 
 public class ComboHandlerVerticle extends Verticle {
@@ -17,9 +14,6 @@ public class ComboHandlerVerticle extends Verticle {
   public static String VERSIONED_FILE_MAP_NAME = "combo-name-buffer";
 
   public static int LISTEN_PORT_NUMBER = 8093;
-
-  // http://yuimin.fh.gov.cn/min/f=/pure/0.2.0/build/pure-min.css,/neverchange/bootstrap/2.3.2/css/bootstrap.min.css&5566
-  // http://yuimin.fh.gov.cn/min/b=3.13.0/build&130727&f=/cssgrids/cssgrids-min.css,/cssnormalize-context/cssnormalize-context-min.css
 
   public void start() {
     vertx.createHttpServer().requestHandler(new Handler<HttpServerRequest>() {
@@ -59,6 +53,7 @@ public class ComboHandlerVerticle extends Verticle {
         if (urlStyle.isEmpty()) {
           urlStyle = "phpMinify";
         }
+        boolean syncRead = config.getBoolean("syncRead", false);
 
         ExtractFileResult efr = null;
 
@@ -79,29 +74,14 @@ public class ComboHandlerVerticle extends Verticle {
 
         switch (fefr.getStatus()) {
           case SUCCESS:
-            new CachedBufferSync(vertx, new Handler<AsyncResult<Void>>() {
-              @Override
-              public void handle(AsyncResult<Void> event) {
-                if (event.succeeded()) {
-                  resp.headers().set("Content-Type", fefr.getMimeType() + "; charset=UTF-8");
-                  resp.setChunked(true);
-                  ConcurrentSharedMap<String, Buffer> fbuffers =
-                      vertx.sharedData().getMap(ComboHandlerVerticle.VERSIONED_FILE_MAP_NAME);
-                  long bufLength = 0;
-                  for (VersionedFile fp : fefr.getFiles()) {
-                    Buffer bf = fbuffers.get(fp.toString());
-                    resp.write(bf);
-                    bufLength += bf.length();
-                  }
-                  resp.putTrailer("total-send-bytes", String.valueOf(bufLength));
-                  resp.end();
-                } else {
-                  resp.setStatusCode(HttpStatus.SC_NOT_FOUND);
-                  resp.setStatusMessage(fefr.getStatus().toString());
-                  resp.end();
-                }
-              }
-            }, comboDiskRootPath, efr.getFiles()).startRead();
+            if (syncRead) {
+              new CachedBufferSync(vertx, new WriteBufferListResponseHandler(req, fefr),
+                  comboDiskRootPath, efr.getFiles()).startRead();
+            } else {
+              new CachedBufferAsync(vertx, new WriteBufferListResponseHandler(req, fefr),
+                  comboDiskRootPath, efr.getFiles()).startRead();
+            }
+
             break;
           default:
             resp.setStatusCode(HttpStatus.SC_NOT_FOUND);

@@ -57,9 +57,9 @@ public class BufferAsyncFileTest extends TestVerticle {
 
     final ExtractFileResult efr = us.extractFiles(us.generateRandomUrl("*.js", 10));
 
-    new CachedBufferSync(vertx, new Handler<AsyncResult<Void>>() {
+    new CachedBufferSync(vertx, new Handler<AsyncResult<Buffer[]>>() {
       @Override
-      public void handle(AsyncResult<Void> event) {
+      public void handle(AsyncResult<Buffer[]> event) {
         if (event.succeeded()) {
           ConcurrentSharedMap<String, Buffer> fbuffers =
               vertx.sharedData().getMap(ComboHandlerVerticle.VERSIONED_FILE_MAP_NAME);

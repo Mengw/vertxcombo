@@ -10,6 +10,8 @@ import org.vertx.java.core.logging.Logger;
 
 public class MinifyStyleUrl implements UrlStyle {
 
+  // http://yuimin.fh.gov.cn/min/f=/pure/0.2.0/build/pure-min.css,/neverchange/bootstrap/2.3.2/css/bootstrap.min.css&5566
+  // http://yuimin.fh.gov.cn/min/b=3.13.0/build&130727&f=/cssgrids/cssgrids-min.css,/cssnormalize-context/cssnormalize-context-min.css
   private Logger logger;
 
   private Path comboDiskRootPath;
@@ -26,8 +28,6 @@ public class MinifyStyleUrl implements UrlStyle {
 
   @Override
   public ExtractFileResult extractFiles(String url) {
-
-
     String[] segs = url.split("&");
     String b = null;
     String f = null;

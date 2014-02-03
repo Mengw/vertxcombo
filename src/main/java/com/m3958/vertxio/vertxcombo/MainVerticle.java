@@ -31,10 +31,11 @@ public class MainVerticle extends Verticle {
 
   public void start() {
 
-    JsonObject config = new JsonObject().putString("comboDiskRoot", "c:/staticyui");
+    JsonObject config =
+        new JsonObject().putString("comboDiskRoot", "c:/staticyui").putBoolean("syncRead", false);
 
 
-    container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config,
+    container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config, 3,
         new AsyncResultHandler<String>() {
 
           @Override
@@ -46,8 +47,8 @@ public class MainVerticle extends Verticle {
               asyncResult.cause().printStackTrace();
             }
           }
-        }
-    );
-
+        });
+    
+    container.deployVerticle("com.m3958.vertxio.vertxcombo.MonitorVerticle",1);
   }
 }
