@@ -27,10 +27,11 @@ import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.buffer.Buffer;
+import org.vertx.java.core.logging.Logger;
 import org.vertx.java.core.shareddata.ConcurrentSharedMap;
 import org.vertx.testtools.TestVerticle;
 
-import com.m3958.vertxio.vertxcombo.CachedBuffer;
+import com.m3958.vertxio.vertxcombo.CachedBufferSync;
 import com.m3958.vertxio.vertxcombo.ComboHandlerVerticle;
 import com.m3958.vertxio.vertxcombo.ExtractFileResult;
 import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
@@ -50,22 +51,22 @@ public class BufferAsyncFileTest extends TestVerticle {
 
   @Test
   public void testBuffer() {
-
+    final Logger log = container.logger();
     Path comboDiskRootPath = Paths.get("c:/staticyui");
-    UrlStyle us = new MinifyStyleUrl(container.logger(),comboDiskRootPath);
-    
-    final ExtractFileResult efr = us.extractFiles(
-    		us.generateRandomUrl("*.js", 10));
-    
-    new CachedBuffer(vertx, new Handler<AsyncResult<Void>>() {
+    UrlStyle us = new MinifyStyleUrl(container.logger(), comboDiskRootPath);
+
+    final ExtractFileResult efr = us.extractFiles(us.generateRandomUrl("*.js", 10));
+
+    new CachedBufferSync(vertx, new Handler<AsyncResult<Void>>() {
       @Override
       public void handle(AsyncResult<Void> event) {
         if (event.succeeded()) {
-          ConcurrentSharedMap<String, Buffer> fbuffers = vertx.sharedData().getMap(ComboHandlerVerticle.sharedMapName);
-          assertEquals(10,fbuffers.size());
-          for(VersionedFile p: efr.getFiles()){
+          ConcurrentSharedMap<String, Buffer> fbuffers =
+              vertx.sharedData().getMap(ComboHandlerVerticle.VERSIONED_FILE_MAP_NAME);
+          assertEquals(10, fbuffers.size());
+          for (VersionedFile p : efr.getFiles()) {
             assertTrue(fbuffers.containsKey(p.toString()));
-            container.logger().info(p.toString());
+            log.info(p.toString());
           }
         } else {
           assertTrue(false);

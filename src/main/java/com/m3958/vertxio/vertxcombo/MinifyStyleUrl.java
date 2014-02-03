@@ -18,7 +18,7 @@ public class MinifyStyleUrl implements UrlStyle {
     this.logger = logger;
     this.comboDiskRootPath = comboDiskRootPath;
   }
-  
+
   public MinifyStyleUrl(Logger logger, String comboDiskRootPath) {
     this.logger = logger;
     this.comboDiskRootPath = Paths.get(comboDiskRootPath);
@@ -50,8 +50,8 @@ public class MinifyStyleUrl implements UrlStyle {
     if (f == null) {
       return new ExtractFileResult(ExtractFileResult.ResultStatus.URL_PATTERN_ERROR);
     }
-    
-    if(version == null){
+
+    if (version == null) {
       version = "1";
     }
 
@@ -96,19 +96,19 @@ public class MinifyStyleUrl implements UrlStyle {
       }
     }
 
-    return new ExtractFileResult(afterBaseAppend,version).setMimeType();
+    return new ExtractFileResult(afterBaseAppend, version).setMimeType();
   }
 
   @Override
-  public String generateRandomUrl(String pattern,int number) {
+  public String generateRandomUrl(String pattern, int number) {
     RandomFileFinder rff = new RandomFileFinder(comboDiskRootPath, pattern, number);
     StringBuilder sb = new StringBuilder("/min/f=");
     try {
       List<Path> selected = rff.selectSome();
-      for(Path p: selected){
+      for (Path p : selected) {
         sb.append(p.toString().replace('\\', '/')).append(',');
       }
-      if(sb.charAt(sb.length() - 1) == ','){
+      if (sb.charAt(sb.length() - 1) == ',') {
         sb = sb.deleteCharAt(sb.length() - 1);
       }
       return sb.toString();

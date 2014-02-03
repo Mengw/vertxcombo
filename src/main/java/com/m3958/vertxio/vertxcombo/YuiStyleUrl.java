@@ -10,7 +10,7 @@ import org.vertx.java.core.logging.Logger;
 
 public class YuiStyleUrl implements UrlStyle {
 
-	//http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js
+  // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js
   private Logger logger;
 
   private Path comboDiskRootPath;
@@ -19,7 +19,7 @@ public class YuiStyleUrl implements UrlStyle {
     this.logger = logger;
     this.comboDiskRootPath = comboDiskRootPath;
   }
-  
+
   public YuiStyleUrl(Logger logger, String comboDiskRootPath) {
     this.logger = logger;
     this.comboDiskRootPath = Paths.get(comboDiskRootPath);
@@ -27,13 +27,13 @@ public class YuiStyleUrl implements UrlStyle {
 
   @Override
   public ExtractFileResult extractFiles(String url) {
-    
+
     int qidx = url.indexOf('?');
     // /combo/version?
     String version = url.substring(0, qidx);
-    
+
     String[] fns = url.substring(qidx + 1).split("&");
-    
+
     String cachedigital = null;
     char fsep = File.separatorChar;
     char unwantedFsep = fsep == '/' ? '\\' : '/';
@@ -54,19 +54,19 @@ public class YuiStyleUrl implements UrlStyle {
         return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
       }
     }
-    return new ExtractFileResult(sanitizedPathes,version).setMimeType();
+    return new ExtractFileResult(sanitizedPathes, version).setMimeType();
   }
 
   @Override
-  public String generateRandomUrl(String pattern,int number) {
+  public String generateRandomUrl(String pattern, int number) {
     RandomFileFinder rff = new RandomFileFinder(comboDiskRootPath, pattern, number);
     StringBuilder sb = new StringBuilder("/combo?");
     try {
       List<Path> selected = rff.selectSome();
-      for(Path p: selected){
+      for (Path p : selected) {
         sb.append(p.toString().replace('\\', '/')).append('&');
       }
-      if(sb.charAt(sb.length() - 1) == '&'){
+      if (sb.charAt(sb.length() - 1) == '&') {
         sb = sb.deleteCharAt(sb.length() - 1);
       }
       return sb.toString();

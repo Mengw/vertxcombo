@@ -14,15 +14,14 @@ import org.vertx.java.platform.Verticle;
 
 public class ComboHandlerVerticle extends Verticle {
 
-  public static String sharedMapName = "combo-name-buffer";
+  public static String VERSIONED_FILE_MAP_NAME = "combo-name-buffer";
+  
+  public static int LISTEN_PORT_NUMBER = 8093;
 
   // http://yuimin.fh.gov.cn/min/f=/pure/0.2.0/build/pure-min.css,/neverchange/bootstrap/2.3.2/css/bootstrap.min.css&5566
   // http://yuimin.fh.gov.cn/min/b=3.13.0/build&130727&f=/cssgrids/cssgrids-min.css,/cssnormalize-context/cssnormalize-context-min.css
 
   public void start() {
-
-
-
     vertx.createHttpServer().requestHandler(new Handler<HttpServerRequest>() {
       public void handle(final HttpServerRequest req) {
 
@@ -33,14 +32,14 @@ public class ComboHandlerVerticle extends Verticle {
         String comboDiskRoot = config.getString("comboDiskRoot", "");
         Path comboDiskRootPath = null;
 
-        if (!comboDiskRoot.isEmpty()) {
+        if(!comboDiskRoot.isEmpty()){
           comboDiskRootPath = Paths.get(comboDiskRoot);
           if (!comboDiskRootPath.toFile().exists()) {
             comboDiskRootPath = null;
           }
         }
 
-        if (comboDiskRootPath == null) {
+        if(comboDiskRootPath == null){
           resp.setStatusCode(HttpStatus.SC_NOT_FOUND);
           resp.setStatusMessage("combo disk root error.");
           resp.end();
@@ -49,45 +48,45 @@ public class ComboHandlerVerticle extends Verticle {
 
         String urlStyle = config.getString("urlStyle", "");
 
-        if (urlStyle.isEmpty()) {
+        if(urlStyle.isEmpty()){
           if(uri.startsWith("/min")){
             urlStyle = "phpMinify";
           }else if(uri.startsWith("/combo")){
             urlStyle = "yuiCombo";
           }
         }
-        
+
         if(urlStyle.isEmpty()){
           urlStyle = "phpMinify";
         }
 
         ExtractFileResult efr = null;
 
-        if ("phpMinify".equals(urlStyle)) {
+        if("phpMinify".equals(urlStyle)){
           UrlStyle us = new MinifyStyleUrl(container.logger(), comboDiskRootPath.normalize());
           efr = us.extractFiles(uri);
-        }else if("yuiCombo".equals(urlStyle)){
+        }else if("yuiCombo".equals(urlStyle)) {
           UrlStyle us = new YuiStyleUrl(container.logger(), comboDiskRootPath.normalize());
           efr = us.extractFiles(uri);
-        } else {
+        }else{
           resp.setStatusCode(HttpStatus.SC_NOT_FOUND);
-          resp.setStatusMessage("unrecogonized url style。");
+          resp.setStatusMessage("unrecogonized url style.");
           resp.end();
           return;
         }
 
         final ExtractFileResult fefr = efr;
 
-        switch (fefr.getStatus()) {
+        switch(fefr.getStatus()){
           case SUCCESS:
-            new CachedBuffer(vertx, new Handler<AsyncResult<Void>>() {
+            new CachedBufferSync(vertx, new Handler<AsyncResult<Void>>() {
               @Override
               public void handle(AsyncResult<Void> event) {
-                if (event.succeeded()) {
+                if(event.succeeded()){
                   resp.headers().set("Content-Type", fefr.getMimeType() + "; charset=UTF-8");
                   resp.setChunked(true);
                   ConcurrentSharedMap<String, Buffer> fbuffers =
-                      vertx.sharedData().getMap(ComboHandlerVerticle.sharedMapName);
+                      vertx.sharedData().getMap(ComboHandlerVerticle.VERSIONED_FILE_MAP_NAME);
                   long bufLength = 0;
                   for (VersionedFile fp : fefr.getFiles()) {
                     Buffer bf = fbuffers.get(fp.toString());
@@ -111,6 +110,6 @@ public class ComboHandlerVerticle extends Verticle {
             break;
         }
       }
-    }).listen(8080);
+    }).listen(LISTEN_PORT_NUMBER);
   }
 }

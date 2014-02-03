@@ -18,23 +18,15 @@ package com.m3958.vertxio.vertxcombo.integration.java;
 
 import static org.vertx.testtools.VertxAssert.assertNotNull;
 import static org.vertx.testtools.VertxAssert.assertTrue;
-import static org.vertx.testtools.VertxAssert.testComplete;
 
-import java.util.Map;
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.VoidHandler;
-import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.http.HttpClient;
-import org.vertx.java.core.http.HttpClientResponse;
 import org.vertx.java.core.logging.Logger;
-import org.vertx.java.platform.Container;
 import org.vertx.testtools.TestVerticle;
 
+import com.m3958.vertxio.vertxcombo.ComboHandlerVerticle;
 import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
 import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
 
@@ -47,54 +39,11 @@ import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
  * This test demonstrates how to do that.
  */
 public class ModuleIntegrationTest extends TestVerticle {
-  
-  public static class ComboResponseHandler implements Handler<HttpClientResponse>{
-    
-    private Logger log;
-    private Container container;
-    
-    public ComboResponseHandler(Container container){
-      this.container = container;
-      this.log = container.logger();
-    }
-    
-    public void handle(HttpClientResponse resp) {
-      log.info("Got a response: " + resp.statusCode());
-      log.info("Got a message: " + resp.statusMessage());
-      StringBuilder sb = new StringBuilder();
-      for (Map.Entry<String, String> header : resp.headers().entries()) {
-        sb.append(header.getKey()).append(": ").append(header.getValue()).append("\n");
-      }
-      log.info("Headers: " + sb);
-
-      final Buffer body = new Buffer(0);
-      final HttpClientResponse respf = resp;
-      resp.dataHandler(new Handler<Buffer>() {
-        public void handle(Buffer data) {
-          body.appendBuffer(data);
-        }
-      });
-      resp.endHandler(new VoidHandler() {
-        public void handle() {
-          // The entire response body has been received
-          log.info("The total body received was " + body.length() + " bytes");
-          StringBuilder sb = new StringBuilder();
-          for (Map.Entry<String, String> header : respf.trailers().entries()) {
-            sb.append(header.getKey()).append(": ").append(header.getValue()).append("\n");
-          }
-          log.info("Trailers: " + sb);
-          Assert.assertEquals(String.valueOf(body.length()),
-              respf.trailers().get("total-send-bytes"));
-          testComplete();
-        }
-      });
-    }
-  }
 
   @Test
   public void testMinifyComboHandler() {
     HttpClient client =
-        vertx.createHttpClient().setPort(8080).setHost("localhost").setMaxPoolSize(10);
+        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER).setHost("localhost").setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
@@ -103,11 +52,11 @@ public class ModuleIntegrationTest extends TestVerticle {
     log.info(url);
     client.getNow(url, new ComboResponseHandler(container));
   }
-  
+
   @Test
   public void testYuiComboHandler() {
     HttpClient client =
-        vertx.createHttpClient().setPort(8080).setHost("localhost").setMaxPoolSize(10);
+        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER).setHost("localhost").setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
@@ -115,12 +64,6 @@ public class ModuleIntegrationTest extends TestVerticle {
     String url = msu.generateRandomUrl("*.js", 10);
     log.info(url);
     client.getNow(url, new ComboResponseHandler(container));
-  }
-
-  @Test
-  public void testSomethingElse() {
-    // Whatever
-    testComplete();
   }
 
   @Override

@@ -1,7 +1,7 @@
 {
 
   // Java verticle
-  //"main":"com.m3958.vertxio.vertxcombo.PingVerticle",
+"main":"com.m3958.vertxio.vertxcombo.MainVerticle",
 
   // In this example we also provide various other versions of the main verticle, you can uncomment this and
   // play around:
@@ -19,7 +19,7 @@
   //"main":"ping_verticle.rb",
 
   // JavaScript verticle
-    "main": "app.js",
+  // "main": "app.js",
 
   // Python verticle
   //"main": "ping_verticle.py",
@@ -27,12 +27,12 @@
 
   // If your module is going to be registered in the Vert.x module registry you will also need the following
   // mandatory fields
-  "description":"Put description of your module here",
+  "description":"a combo handler implemented with vertx",
   "licenses": ["The Apache Software License Version 2.0"],
-  "author": "Joe Bloggs",
+  "author": "jianglibo",
 
   // Optional fields
-  "developers": ["Other Dev 1", "Other Dev 2"],
-  "keywords": ["gerbils", "cars", "cheese", "chocolate", "underpants", "herring"],
-  "homepage": "url to your project page"
+  "developers": [],
+  "keywords": ["combo"],
+  "homepage": "http://www.m3958.com"
 }
