@@ -7,6 +7,7 @@ it will be continuous improvement when I know more about vertx and java asynchro
 ## about test
 
 when you look at test code,there are code as below:
+
 	  public static String comboRoot = "c:/staticyui";
 	
 	  private boolean skipTest() {
