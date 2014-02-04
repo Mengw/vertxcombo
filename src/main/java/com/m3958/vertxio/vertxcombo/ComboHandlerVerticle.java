@@ -15,6 +15,8 @@ public class ComboHandlerVerticle extends Verticle {
   public static String CFG_COMBO_DISK_ROOT = "comboDiskRoot";
   public static String CFG_SYNC_READ = "syncRead";
   public static String CFG_MAX_MEM = "maxMem";
+  public static String CFG_DEFAULT_MAXAGE = "defaultMaxAge";
+  public static String CFG_VERSIONED_MAXAGE = "versionedMaxAge";
 
   public static int LISTEN_PORT_NUMBER = 8093;
 
@@ -77,10 +79,10 @@ public class ComboHandlerVerticle extends Verticle {
         switch (fefr.getStatus()) {
           case SUCCESS:
             if (syncRead) {
-              new CachedBufferSync(vertx, new WriteBufferListResponseHandler(req, fefr),
+              new CachedBufferSync(vertx, new WriteBufferListResponseHandler(req, config, fefr),
                   comboDiskRootPath, efr.getFiles()).startRead();
             } else {
-              new CachedBufferAsync(vertx, new WriteBufferListResponseHandler(req, fefr),
+              new CachedBufferAsync(vertx, new WriteBufferListResponseHandler(req, config, fefr),
                   comboDiskRootPath, efr.getFiles()).startRead();
             }
 
