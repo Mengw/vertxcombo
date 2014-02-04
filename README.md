@@ -31,6 +31,10 @@ minify style2: /b=3.13.0/build&130727&f=
 
 yuicombo style: /combo/345?3.10.0/build/color-harmony/color-harmony.js&3.10.0/build
 
+## about cache control
+
+if url contains a version number, an etag base on url will be send. max-age can be configed,according to the version number's existence. defaultMaxAge and versionedMaxAge. 
+
 ## limitations
 
 It's not a general purpuse combohandler.It cache all file in memory,so you must know how much size of files to server.
