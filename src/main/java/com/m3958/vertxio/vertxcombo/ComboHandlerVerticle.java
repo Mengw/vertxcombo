@@ -12,6 +12,9 @@ import org.vertx.java.platform.Verticle;
 public class ComboHandlerVerticle extends Verticle {
 
   public static String VERSIONED_FILE_MAP_NAME = "combo-name-buffer";
+  public static String CFG_COMBO_DISK_ROOT = "comboDiskRoot";
+  public static String CFG_SYNC_READ = "syncRead";
+  public static String CFG_MAX_MEM = "maxMem";
 
   public static int LISTEN_PORT_NUMBER = 8093;
 
@@ -23,7 +26,7 @@ public class ComboHandlerVerticle extends Verticle {
         String uri = req.uri();
         JsonObject config = container.config();
 
-        String comboDiskRoot = config.getString("comboDiskRoot", "");
+        String comboDiskRoot = config.getString(CFG_COMBO_DISK_ROOT, "");
         Path comboDiskRootPath = null;
 
         if (!comboDiskRoot.isEmpty()) {
@@ -40,28 +43,27 @@ public class ComboHandlerVerticle extends Verticle {
           return;
         }
 
-        String urlStyle = config.getString("urlStyle", "");
-
-        if (urlStyle.isEmpty()) {
-          if (uri.startsWith("/min")) {
-            urlStyle = "phpMinify";
-          } else if (uri.startsWith("/combo")) {
-            urlStyle = "yuiCombo";
-          }
-        }
-
-        if (urlStyle.isEmpty()) {
+        String urlStyle = "";
+        if (uri.startsWith("/min")) {
           urlStyle = "phpMinify";
+        } else if (uri.startsWith("/combo")) {
+          urlStyle = "yuiCombo";
+        } else {
+          urlStyle = "singleFile";
         }
-        boolean syncRead = config.getBoolean("syncRead", false);
+
+        boolean syncRead = config.getBoolean(CFG_SYNC_READ, false);
 
         ExtractFileResult efr = null;
-
+        UrlStyle us = null;
         if ("phpMinify".equals(urlStyle)) {
-          UrlStyle us = new MinifyStyleUrl(container.logger(), comboDiskRootPath.normalize());
+          us = new MinifyStyleUrl(container.logger(), comboDiskRootPath.normalize());
           efr = us.extractFiles(uri);
         } else if ("yuiCombo".equals(urlStyle)) {
-          UrlStyle us = new YuiStyleUrl(container.logger(), comboDiskRootPath.normalize());
+          us = new YuiStyleUrl(container.logger(), comboDiskRootPath.normalize());
+          efr = us.extractFiles(uri);
+        } else if ("singleFile".equals(urlStyle)) {
+          us = new SingleFileUrl(container.logger(), comboDiskRootPath);
           efr = us.extractFiles(uri);
         } else {
           resp.setStatusCode(HttpStatus.SC_NOT_FOUND);

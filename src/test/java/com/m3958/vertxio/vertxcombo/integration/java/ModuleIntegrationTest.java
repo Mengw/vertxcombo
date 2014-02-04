@@ -18,7 +18,9 @@ package com.m3958.vertxio.vertxcombo.integration.java;
 
 import static org.vertx.testtools.VertxAssert.assertNotNull;
 import static org.vertx.testtools.VertxAssert.assertTrue;
+import static org.vertx.testtools.VertxAssert.testComplete;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
@@ -28,6 +30,7 @@ import org.vertx.testtools.TestVerticle;
 
 import com.m3958.vertxio.vertxcombo.ComboHandlerVerticle;
 import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
+import com.m3958.vertxio.vertxcombo.SingleFileUrl;
 import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
 
 /**
@@ -40,30 +43,62 @@ import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
  */
 public class ModuleIntegrationTest extends TestVerticle {
 
+  public static String comboRoot = "c:/staticyui";
+
+  private boolean skipTest() {
+    if (vertx.fileSystem().existsSync(comboRoot)) {
+
+      return false;
+    } else {
+      Assert.assertTrue(true);
+      testComplete();
+      return true;
+    }
+  }
+
   @Test
   public void testMinifyComboHandler() {
+    if (skipTest()) return;
     HttpClient client =
-        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER).setHost("localhost").setMaxPoolSize(10);
+        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER)
+            .setHost("localhost").setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
-    MinifyStyleUrl msu = new MinifyStyleUrl(log, "c:/staticyui");
-    String url = msu.generateRandomUrl("*.js", 10);
+    MinifyStyleUrl msu = new MinifyStyleUrl(log, comboRoot);
+    String url = msu.generateRandomUrl("*.js", 10, "345");
     log.info(url);
-    client.getNow(url, new ComboResponseHandler(container));
+    client.getNow(url, new TestComboResponseHandler(container));
   }
 
   @Test
   public void testYuiComboHandler() {
+    if (skipTest()) return;
     HttpClient client =
-        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER).setHost("localhost").setMaxPoolSize(10);
+        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER)
+            .setHost("localhost").setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
-    YuiStyleUrl msu = new YuiStyleUrl(log, "c:/staticyui");
-    String url = msu.generateRandomUrl("*.js", 10);
+    YuiStyleUrl msu = new YuiStyleUrl(log, comboRoot);
+    String url = msu.generateRandomUrl("*.js", 10, "345");
     log.info(url);
-    client.getNow(url, new ComboResponseHandler(container));
+    client.getNow(url, new TestComboResponseHandler(container));
+  }
+
+  @Test
+  public void testSingleFielComboHandler() {
+    if (skipTest()) return;
+    HttpClient client =
+        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER)
+            .setHost("localhost").setMaxPoolSize(10);
+
+    final Logger log = container.logger();
+
+    SingleFileUrl msu = new SingleFileUrl(log, comboRoot);
+    String url = msu.generateRandomUrl("*.js", 10, "345");
+    log.info(url);
+    client.getNow(url, new TestComboResponseHandler(container));
   }
 
   @Override

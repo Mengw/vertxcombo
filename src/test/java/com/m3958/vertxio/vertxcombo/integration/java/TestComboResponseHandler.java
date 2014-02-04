@@ -12,10 +12,10 @@ import org.vertx.java.core.http.HttpClientResponse;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Container;
 
-public class ComboResponseHandler implements Handler<HttpClientResponse> {
+public class TestComboResponseHandler implements Handler<HttpClientResponse> {
   private Logger log;
 
-  public ComboResponseHandler(Container container) {
+  public TestComboResponseHandler(Container container) {
     this.log = container.logger();
   }
 

@@ -23,6 +23,7 @@ import static org.vertx.testtools.VertxAssert.testComplete;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Handler;
@@ -40,22 +41,28 @@ import com.m3958.vertxio.vertxcombo.VersionedFile;
 
 
 /**
- * Example Java integration test that deploys the module that this project builds.
- * 
- * Quite often in integration tests you want to deploy the same module for all tests and you don't
- * want tests to start before the module has been deployed.
- * 
- * This test demonstrates how to do that.
  */
 public class BufferAsyncFileTest extends TestVerticle {
 
+  private boolean skipTest() {
+    if (vertx.fileSystem().existsSync(ModuleIntegrationTest.comboRoot)) {
+
+      return false;
+    } else {
+      Assert.assertTrue(true);
+      testComplete();
+      return true;
+    }
+  }
+
   @Test
   public void testBuffer() {
+    if (skipTest()) return;
     final Logger log = container.logger();
-    Path comboDiskRootPath = Paths.get("c:/staticyui");
+    Path comboDiskRootPath = Paths.get(ModuleIntegrationTest.comboRoot);
     UrlStyle us = new MinifyStyleUrl(container.logger(), comboDiskRootPath);
 
-    final ExtractFileResult efr = us.extractFiles(us.generateRandomUrl("*.js", 10));
+    final ExtractFileResult efr = us.extractFiles(us.generateRandomUrl("*.js", 10, "345"));
 
     new CachedBufferSync(vertx, new Handler<AsyncResult<Buffer[]>>() {
       @Override

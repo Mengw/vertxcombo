@@ -1,49 +1,46 @@
 package com.m3958.vertxio.vertxcombo;
+
 /*
- * Copyright 2013 Red Hat, Inc.
- *
- * Red Hat licenses this file to you under the Apache License, version 2.0
- * (the "License"); you may not use this file except in compliance with the
- * License.  You may obtain a copy of the License at:
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * @author <a href="http://tfox.org">Tim Fox</a>
+ * 
+ * @author jianglibo@gmail.com
  */
+
+import java.util.ArrayDeque;
 
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
+import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Verticle;
 
 /*
-This is monitor verticle.
+ * This is monitor verticle.
  */
 public class MonitorVerticle extends Verticle {
-  
+
   public static String BUFFER_COUNT_ADDRESS = "buffer_count_address";
-  
-  private long bufferSizeDelta;
-  
-  private int bufNumbers;
+
+  private ArrayDeque<VersionedFile> vfArray = new ArrayDeque<>();
+
+  private long totalSize = 0;
 
   public void start() {
     final Logger log = container.logger();
-    
-    vertx.eventBus().registerHandler(BUFFER_COUNT_ADDRESS, new Handler<Message<Integer>>() {
+    JsonObject config = container.config();
+    final long maxMem = config.getLong(ComboHandlerVerticle.CFG_MAX_MEM, 64 * 1024 * 1024);
+
+    vertx.eventBus().registerHandler(BUFFER_COUNT_ADDRESS, new Handler<Message<JsonObject>>() {
       @Override
-      public void handle(Message<Integer> message) {
-        bufferSizeDelta += message.body();
-        bufNumbers++;
-        
-        log.info("size changed:" + bufferSizeDelta);
-        log.info("buffer number changed:" + bufNumbers);
+      public void handle(Message<JsonObject> message) {
+        VersionedFile vf = VersionedFile.fromJson(message.body());
+        vfArray.add(vf);
+        totalSize += vf.getLength();
+        while (totalSize > maxMem) {
+          VersionedFile rvf = vfArray.removeFirst();
+          totalSize -= rvf.getLength();
+          log.info("maxMem reached");
+          log.info(rvf.toString() + " is removed from cache.length: " + rvf.getLength());
+        }
       }
     });
     log.info("MonitorVerticle started");

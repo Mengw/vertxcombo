@@ -10,8 +10,8 @@ import org.vertx.java.core.buffer.Buffer;
 public class CachedBufferSync extends CachedBufferBase {
 
 
-  public CachedBufferSync(Vertx vertx, Handler<AsyncResult<Buffer[]>> doneCb, Path comboDiskRootPath,
-      VersionedFile[] infiles) {
+  public CachedBufferSync(Vertx vertx, Handler<AsyncResult<Buffer[]>> doneCb,
+      Path comboDiskRootPath, VersionedFile[] infiles) {
     super(vertx, doneCb, comboDiskRootPath, infiles);
   }
 
@@ -33,7 +33,7 @@ public class CachedBufferSync extends CachedBufferBase {
       allDone(i, bf);
     } else {
       fbufferMap.put(vf.toString(), bf);
-      eb.send(MonitorVerticle.BUFFER_COUNT_ADDRESS, bf.length());
+      eb.send(MonitorVerticle.BUFFER_COUNT_ADDRESS, vf.setLength(bf.length()).toJson());
       allDone(i, bf);
     }
   }

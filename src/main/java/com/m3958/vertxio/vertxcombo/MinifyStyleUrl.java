@@ -31,7 +31,7 @@ public class MinifyStyleUrl implements UrlStyle {
     String[] segs = url.split("&");
     String b = null;
     String f = null;
-    String version = null;
+    String version = "";
     char fsep = File.separatorChar;
     char unwantedFsep = fsep == '/' ? '\\' : '/';
 
@@ -46,13 +46,8 @@ public class MinifyStyleUrl implements UrlStyle {
         version = seg;
       }
     }
-
     if (f == null) {
       return new ExtractFileResult(ExtractFileResult.ResultStatus.URL_PATTERN_ERROR);
-    }
-
-    if (version == null) {
-      version = "1";
     }
 
     int start = f.startsWith("f=") ? 2 : 7;
@@ -96,11 +91,11 @@ public class MinifyStyleUrl implements UrlStyle {
       }
     }
 
-    return new ExtractFileResult(afterBaseAppend, version).setMimeType();
+    return new ExtractFileResult(afterBaseAppend, version, url).setMimeType();
   }
 
   @Override
-  public String generateRandomUrl(String pattern, int number) {
+  public String generateRandomUrl(String pattern, int number, String version) {
     RandomFileFinder rff = new RandomFileFinder(comboDiskRootPath, pattern, number);
     StringBuilder sb = new StringBuilder("/min/f=");
     try {
@@ -110,6 +105,11 @@ public class MinifyStyleUrl implements UrlStyle {
       }
       if (sb.charAt(sb.length() - 1) == ',') {
         sb = sb.deleteCharAt(sb.length() - 1);
+      }
+      if (version == null || version.isEmpty()) {
+
+      } else {
+        sb.append("&").append(version);
       }
       return sb.toString();
     } catch (IOException e) {

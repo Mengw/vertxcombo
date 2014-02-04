@@ -31,7 +31,7 @@ public class CachedBufferAsync extends CachedBufferBase{
         if (ar.succeeded()) {
           Buffer bf = ar.result();
           fbufferMap.put(vf.toString(), bf);
-          eb.send(MonitorVerticle.BUFFER_COUNT_ADDRESS, bf.length());
+          eb.send(MonitorVerticle.BUFFER_COUNT_ADDRESS, vf.setLength(bf.length()).toJson());
           allDone(i, bf);
         } else {
           allDone(i, null);

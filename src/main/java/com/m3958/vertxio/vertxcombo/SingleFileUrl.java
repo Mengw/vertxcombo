@@ -4,35 +4,41 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.vertx.java.core.logging.Logger;
 
-public class YuiStyleUrl implements UrlStyle {
+public class SingleFileUrl implements UrlStyle {
 
   // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js
   private Logger logger;
 
   private Path comboDiskRootPath;
 
-  public YuiStyleUrl(Logger logger, Path comboDiskRootPath) {
+  public SingleFileUrl(Logger logger, Path comboDiskRootPath) {
     this.logger = logger;
     this.comboDiskRootPath = comboDiskRootPath;
   }
 
-  public YuiStyleUrl(Logger logger, String comboDiskRootPath) {
+  public SingleFileUrl(Logger logger, String comboDiskRootPath) {
     this.logger = logger;
     this.comboDiskRootPath = Paths.get(comboDiskRootPath);
   }
 
   @Override
   public ExtractFileResult extractFiles(String url) {
-
+    // /build/yui/yui-min.js?5566
     int qidx = url.indexOf('?');
-    // /combo/version?
-    String version = url.substring(0, qidx);
 
-    String[] fns = url.substring(qidx + 1).split("&");
+    String onefn;
+    String version = "";
+    if (qidx == -1) {
+      onefn = url;
+    } else {
+      version = url.substring(qidx + 1);
+      onefn = url.substring(0, qidx);
+    }
+
+    String[] fns = new String[] {onefn};
 
     char fsep = File.separatorChar;
     char unwantedFsep = fsep == '/' ? '\\' : '/';
@@ -57,23 +63,17 @@ public class YuiStyleUrl implements UrlStyle {
   }
 
   @Override
-  public String generateRandomUrl(String pattern, int number,String version) {
-    RandomFileFinder rff = new RandomFileFinder(comboDiskRootPath, pattern, number);
-    StringBuilder sb; 
-    if(version == null || version.isEmpty()){
-      sb = new StringBuilder("/combo?");
-    }else{
-      sb = new StringBuilder("/combo/").append(version).append("?");
-    }
+  public String generateRandomUrl(String pattern, int number, String version) {
+    RandomFileFinder rff = new RandomFileFinder(comboDiskRootPath, pattern, 1);
     try {
-      List<Path> selected = rff.selectSome();
-      for (Path p : selected) {
-        sb.append(p.toString().replace('\\', '/')).append('&');
+      Path selected = rff.selectSome().get(0);
+      String url = selected.toString().replace('\\', '/');
+      if (version == null || version.isEmpty()) {
+
+      } else {
+        url = url + "?" + version;
       }
-      if (sb.charAt(sb.length() - 1) == '&') {
-        sb = sb.deleteCharAt(sb.length() - 1);
-      }
-      return sb.toString();
+      return url;
     } catch (IOException e) {
       e.printStackTrace();
     }
