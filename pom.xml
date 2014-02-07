@@ -16,6 +16,14 @@
 		<version>7</version>
 	</parent>
 
+	<distributionManagement>
+		<repository>
+			<id>bintray-jianglibo-maven-com.m3958.vertxio.vertxcombo</id>
+			<name>jianglibo-maven-com.m3958.vertxio.vertxcombo</name>
+			<url>https://api.bintray.com/maven/jianglibo/maven/com.m3958.vertxio.vertxcombo</url>
+		</repository>
+	</distributionManagement>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
