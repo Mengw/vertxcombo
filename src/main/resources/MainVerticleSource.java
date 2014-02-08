@@ -5,6 +5,7 @@
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.json.JsonObject;
+import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Verticle;
 
 public class MainVerticleSource extends Verticle {
@@ -22,12 +23,18 @@ public class MainVerticleSource extends Verticle {
   public static long CFGVALUE_MAX_MEM = 64 * 1024 * 1024;
 
   public void start() {
+    JsonObject configc = container.config();
+
+    Logger log = container.logger();
 
     JsonObject config =
         new JsonObject().putString(CFGKEY_COMBO_DISK_ROOT, CFGVALUE_COMBO_DISK_ROOT)
             .putBoolean(CFGKEY_SYNC_READ, false).putNumber(CFGKEY_MAX_MEM, CFGVALUE_MAX_MEM)
             .putNumber(CFGKEY_LISTEN_PORT, CFGVALUE_LISTEN_PORT);
 
+    config.mergeIn(configc);
+    log.info("final config: ");
+    log.info(config.toString());
 
     container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config, 3,
         new AsyncResultHandler<String>() {

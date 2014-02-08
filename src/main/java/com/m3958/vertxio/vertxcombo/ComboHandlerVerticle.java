@@ -13,7 +13,7 @@ public class ComboHandlerVerticle extends Verticle {
 
 
   public void start() {
-
+    
     final JsonObject config = container.config();
 
     vertx.createHttpServer().requestHandler(new Handler<HttpServerRequest>() {
