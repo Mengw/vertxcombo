@@ -43,10 +43,8 @@ import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
  */
 public class ModuleIntegrationTest extends TestVerticle {
 
-  public static String comboRoot = "c:/staticyui";
-
   private boolean skipTest() {
-    if (vertx.fileSystem().existsSync(comboRoot)) {
+    if (vertx.fileSystem().existsSync(MainVerticle.CFGVALUE_COMBO_DISK_ROOT)) {
 
       return false;
     } else {
@@ -60,12 +58,12 @@ public class ModuleIntegrationTest extends TestVerticle {
   public void testMinifyComboHandler() {
     if (skipTest()) return;
     HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.LISTEN_PORT).setHost("localhost")
+        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
             .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
-    MinifyStyleUrl msu = new MinifyStyleUrl(log, comboRoot);
+    MinifyStyleUrl msu = new MinifyStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     String url = msu.generateRandomUrl("*.js", 10, "345");
     log.info(url);
     client.getNow(url, new TestComboResponseHandler(container));
@@ -75,12 +73,12 @@ public class ModuleIntegrationTest extends TestVerticle {
   public void testYuiComboHandler() {
     if (skipTest()) return;
     HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.LISTEN_PORT).setHost("localhost")
+        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
             .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
-    YuiStyleUrl msu = new YuiStyleUrl(log, comboRoot);
+    YuiStyleUrl msu = new YuiStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     String url = msu.generateRandomUrl("*.js", 10, "345");
     log.info(url);
     client.getNow(url, new TestComboResponseHandler(container));
@@ -90,12 +88,12 @@ public class ModuleIntegrationTest extends TestVerticle {
   public void testSingleFielComboHandler() {
     if (skipTest()) return;
     HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.LISTEN_PORT).setHost("localhost")
+        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
             .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
-    SingleFileUrl msu = new SingleFileUrl(log, comboRoot);
+    SingleFileUrl msu = new SingleFileUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     String url = msu.generateRandomUrl("*.js", 10, "345");
     log.info(url);
     client.getNow(url, new TestComboResponseHandler(container));

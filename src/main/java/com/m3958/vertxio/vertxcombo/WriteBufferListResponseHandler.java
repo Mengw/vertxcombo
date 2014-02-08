@@ -21,8 +21,8 @@ public class WriteBufferListResponseHandler implements Handler<AsyncResult<Buffe
   public WriteBufferListResponseHandler(HttpServerRequest req, JsonObject config,
       ExtractFileResult fefr) {
     this.resp = req.response();
-    this.defaultMaxAge = config.getLong(MainVerticle.CFG_DEFAULT_MAXAGE, 600);
-    this.versionedMaxAge = config.getLong(MainVerticle.CFG_VERSIONED_MAXAGE, 31536000);
+    this.defaultMaxAge = config.getLong(MainVerticle.CFGKEY_DEFAULT_MAXAGE, 600);
+    this.versionedMaxAge = config.getLong(MainVerticle.CFGKEY_VERSIONED_MAXAGE, 31536000);
     this.fefr = fefr;
   }
 

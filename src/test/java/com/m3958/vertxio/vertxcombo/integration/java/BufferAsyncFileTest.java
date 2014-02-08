@@ -45,7 +45,7 @@ import com.m3958.vertxio.vertxcombo.VersionedFile;
 public class BufferAsyncFileTest extends TestVerticle {
 
   private boolean skipTest() {
-    if (vertx.fileSystem().existsSync(ModuleIntegrationTest.comboRoot)) {
+    if (vertx.fileSystem().existsSync(MainVerticle.CFGVALUE_COMBO_DISK_ROOT)) {
       return false;
     } else {
       Assert.assertTrue(true);
@@ -58,7 +58,7 @@ public class BufferAsyncFileTest extends TestVerticle {
   public void testBuffer() {
     if (skipTest()) return;
     final Logger log = container.logger();
-    Path comboDiskRootPath = Paths.get(ModuleIntegrationTest.comboRoot);
+    Path comboDiskRootPath = Paths.get(MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     UrlStyle us = new MinifyStyleUrl(container.logger(), comboDiskRootPath);
 
     final ExtractFileResult efr = us.extractFiles(us.generateRandomUrl("*.js", 10, "345"));

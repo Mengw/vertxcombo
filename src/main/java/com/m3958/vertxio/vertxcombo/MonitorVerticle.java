@@ -27,7 +27,7 @@ public class MonitorVerticle extends Verticle {
   public void start() {
     final Logger log = container.logger();
     JsonObject config = container.config();
-    final long maxMem = config.getLong(MainVerticle.CFG_MAX_MEM, 64 * 1024 * 1024);
+    final long maxMem = config.getLong(MainVerticle.CFGKEY_MAX_MEM, 64 * 1024 * 1024);
 
     vertx.eventBus().registerHandler(BUFFER_COUNT_ADDRESS, new Handler<Message<JsonObject>>() {
       @Override

@@ -12,20 +12,23 @@ import org.vertx.java.platform.Verticle;
 public class MainVerticle extends Verticle {
 
   public static String VERSIONED_FILE_MAP_NAME = "combo-name-buffer";
-  public static String CFG_COMBO_DISK_ROOT = "comboDiskRoot";
-  public static String CFG_SYNC_READ = "syncRead";
-  public static String CFG_MAX_MEM = "maxMem";
-  public static String CFG_DEFAULT_MAXAGE = "defaultMaxAge";
-  public static String CFG_VERSIONED_MAXAGE = "versionedMaxAge";
-  public static String CFG_LISTEN_PORT = "listenPort";
-  public static int LISTEN_PORT = 8093;
+  public static String CFGKEY_COMBO_DISK_ROOT = "comboDiskRoot";
+  public static String CFGKEY_SYNC_READ = "syncRead";
+  public static String CFGKEY_MAX_MEM = "maxMem";
+  public static String CFGKEY_DEFAULT_MAXAGE = "defaultMaxAge";
+  public static String CFGKEY_VERSIONED_MAXAGE = "versionedMaxAge";
+  public static String CFGKEY_LISTEN_PORT = "listenPort";
+  
+  public static int CFGVALUE_LISTEN_PORT = 8093;
+  public static String CFGVALUE_COMBO_DISK_ROOT = "c:/staticyui";
+  public static long CFGVALUE_MAX_MEM = 64 * 1024 * 1024;
 
   public void start() {
 
     JsonObject config =
-        new JsonObject().putString(CFG_COMBO_DISK_ROOT, "c:/staticyui")
-            .putBoolean(CFG_SYNC_READ, false).putNumber(CFG_MAX_MEM, 64 * 1024 * 1024)
-            .putNumber(CFG_LISTEN_PORT, LISTEN_PORT);
+        new JsonObject().putString(CFGKEY_COMBO_DISK_ROOT, CFGVALUE_COMBO_DISK_ROOT)
+            .putBoolean(CFGKEY_SYNC_READ, false).putNumber(CFGKEY_MAX_MEM, CFGVALUE_MAX_MEM)
+            .putNumber(CFGKEY_LISTEN_PORT, CFGVALUE_LISTEN_PORT);
 
 
     container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config, 3,

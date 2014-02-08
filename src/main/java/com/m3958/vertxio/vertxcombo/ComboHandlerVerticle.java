@@ -23,7 +23,7 @@ public class ComboHandlerVerticle extends Verticle {
         final HttpServerResponse resp = req.response();
         String uri = req.uri();
 
-        String comboDiskRoot = config.getString(MainVerticle.CFG_COMBO_DISK_ROOT, "");
+        String comboDiskRoot = config.getString(MainVerticle.CFGKEY_COMBO_DISK_ROOT, "");
         Path comboDiskRootPath = null;
 
         if (!comboDiskRoot.isEmpty()) {
@@ -49,7 +49,7 @@ public class ComboHandlerVerticle extends Verticle {
           urlStyle = "singleFile";
         }
 
-        boolean syncRead = config.getBoolean(MainVerticle.CFG_SYNC_READ, false);
+        boolean syncRead = config.getBoolean(MainVerticle.CFGKEY_SYNC_READ, false);
 
         ExtractFileResult efr = null;
         UrlStyle us = null;
@@ -89,6 +89,6 @@ public class ComboHandlerVerticle extends Verticle {
             break;
         }
       }
-    }).listen(config.getInteger(MainVerticle.CFG_LISTEN_PORT));
+    }).listen(config.getInteger(MainVerticle.CFGKEY_LISTEN_PORT));
   }
 }
