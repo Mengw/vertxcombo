@@ -5,7 +5,7 @@
 	<groupId>com.m3958.vertxio</groupId>
 	<artifactId>vertxcombo</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<name>Project - vertxcombo</name>
 	<url>https://github.com/jianglibo/vertxcombo</url>
 	<description>
@@ -29,7 +29,7 @@
     <developerConnection>scm:git:git@github.com:jianglibo/vertxcombo.git</developerConnection>
     <url>git@github.com:jianglibo/vertxcombo.git</url>
   </scm>
-  
+ <!-- 
   <distributionManagement>
     <repository>
       <id>sonatype-nexus-staging</id>
@@ -37,7 +37,7 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-  
+ --> 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
