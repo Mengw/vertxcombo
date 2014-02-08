@@ -29,15 +29,15 @@
     <developerConnection>scm:git:git@github.com:jianglibo/vertxcombo.git</developerConnection>
     <url>git@github.com:jianglibo/vertxcombo.git</url>
   </scm>
-<!-- 
-	<distributionManagement>
-		<repository>
-			<id>bintray-jianglibo-maven-com.m3958.vertxio.vertxcombo</id>
-			<name>jianglibo-maven-com.m3958.vertxio.vertxcombo</name>
-			<url>https://api.bintray.com/maven/jianglibo/maven/com.m3958.vertxio.vertxcombo</url>
-		</repository>
-	</distributionManagement>
- -->
+  
+  <distributionManagement>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Nexus Staging Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
