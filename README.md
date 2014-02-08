@@ -3,6 +3,24 @@
 It's a simple Combo Handler.
 
 it will be continuous improvement when I know more about vertx and java asynchronous.
+##Usage
+
+create a config file in any folder,write content bellow:
+
+	{
+	    "comboDiskRoot" : "/opt/staticyui",
+	    "syncRead" : false,
+	    "maxMem" : 67108864,
+	    "defaultMaxAge" : 600,
+	    "versionedMaxAge" : 31536000,
+	    "listenPort" : 8093
+	}
+
+enter created folder,type command bellow:
+
+	vertx runmod com.m3958.vertxio~vertxcombo~0.0.1.3
+
+vertx will download and start the module.
 
 ## about test
 
