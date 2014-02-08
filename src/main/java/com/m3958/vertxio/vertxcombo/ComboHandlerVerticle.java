@@ -22,7 +22,6 @@ public class ComboHandlerVerticle extends Verticle {
 
         final HttpServerResponse resp = req.response();
         String uri = req.uri();
-        // JsonObject config = container.config();
 
         String comboDiskRoot = config.getString(MainVerticle.CFG_COMBO_DISK_ROOT, "");
         Path comboDiskRootPath = null;

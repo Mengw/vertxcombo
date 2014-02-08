@@ -33,5 +33,10 @@ public class ExampleUnitTest {
     int idx = url.indexOf('?');
     Assert.assertEquals("", url.substring(idx + 1));
   }
+  
+  @Test
+  public void testCurDir() {
+    System.out.println(System.getProperty("user.dir"));
+  }
 
 }

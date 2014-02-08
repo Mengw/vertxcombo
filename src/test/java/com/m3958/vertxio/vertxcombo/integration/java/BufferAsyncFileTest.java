@@ -46,7 +46,6 @@ public class BufferAsyncFileTest extends TestVerticle {
 
   private boolean skipTest() {
     if (vertx.fileSystem().existsSync(ModuleIntegrationTest.comboRoot)) {
-
       return false;
     } else {
       Assert.assertTrue(true);
@@ -74,11 +73,12 @@ public class BufferAsyncFileTest extends TestVerticle {
           for (VersionedFile p : efr.getFiles()) {
             assertTrue(fbuffers.containsKey(p.toString()));
             log.info(p.toString());
+            testComplete();
           }
         } else {
           assertTrue(false);
+          testComplete();
         }
-        testComplete();
       }
     }, comboDiskRootPath, efr.getFiles()).startRead();
   }
