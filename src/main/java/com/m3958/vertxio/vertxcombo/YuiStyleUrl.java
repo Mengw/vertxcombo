@@ -53,16 +53,16 @@ public class YuiStyleUrl implements UrlStyle {
         return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
       }
     }
-    return new ExtractFileResult(sanitizedPathes, version,url).setMimeType();
+    return new ExtractFileResult(sanitizedPathes, version, url).setMimeType();
   }
 
   @Override
-  public String generateRandomUrl(String pattern, int number,String version) {
+  public String generateRandomUrl(String pattern, int number, String version) {
     RandomFileFinder rff = new RandomFileFinder(comboDiskRootPath, pattern, number);
-    StringBuilder sb; 
-    if(version == null || version.isEmpty()){
+    StringBuilder sb;
+    if (version == null || version.isEmpty()) {
       sb = new StringBuilder("/combo?");
-    }else{
+    } else {
       sb = new StringBuilder("/combo/").append(version).append("?");
     }
     try {

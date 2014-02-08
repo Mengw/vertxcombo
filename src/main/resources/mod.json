@@ -1,13 +1,13 @@
 {
 
   // Java verticle
-"main":"com.m3958.vertxio.vertxcombo.MainVerticle",
+  //"main":"com.m3958.vertxio.vertxcombo.MainVerticle",
 
   // In this example we also provide various other versions of the main verticle, you can uncomment this and
   // play around:
 
   // Java *source* verticle
-  //"main":"JavaSourcePingVerticle.java",
+    "main":"MainVerticleSource.java",
 
   // Compiled Groovy verticle - note that they must be prefixed with 'groovy:' to distinguish them from compiled Java verticles
   //"main":"groovy:com.mycompany.myproject.GroovyPingVerticle",

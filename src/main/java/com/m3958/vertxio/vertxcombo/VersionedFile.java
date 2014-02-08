@@ -52,8 +52,8 @@ public class VersionedFile {
     return new JsonObject().putString("v", v).putString("file", file.toString())
         .putNumber("length", length);
   }
-  
-  public static VersionedFile fromJson(JsonObject jo){
+
+  public static VersionedFile fromJson(JsonObject jo) {
     VersionedFile vf = new VersionedFile(Paths.get(jo.getString("file")), jo.getString("v"));
     return vf.setLength(jo.getLong("length"));
   }

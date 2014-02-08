@@ -11,24 +11,20 @@ import org.vertx.java.platform.Verticle;
 
 public class ComboHandlerVerticle extends Verticle {
 
-  public static String VERSIONED_FILE_MAP_NAME = "combo-name-buffer";
-  public static String CFG_COMBO_DISK_ROOT = "comboDiskRoot";
-  public static String CFG_SYNC_READ = "syncRead";
-  public static String CFG_MAX_MEM = "maxMem";
-  public static String CFG_DEFAULT_MAXAGE = "defaultMaxAge";
-  public static String CFG_VERSIONED_MAXAGE = "versionedMaxAge";
-
-  public static int LISTEN_PORT_NUMBER = 8093;
 
   public void start() {
+
+    final JsonObject config = container.config();
+
     vertx.createHttpServer().requestHandler(new Handler<HttpServerRequest>() {
+
       public void handle(final HttpServerRequest req) {
 
         final HttpServerResponse resp = req.response();
         String uri = req.uri();
-        JsonObject config = container.config();
+        // JsonObject config = container.config();
 
-        String comboDiskRoot = config.getString(CFG_COMBO_DISK_ROOT, "");
+        String comboDiskRoot = config.getString(MainVerticle.CFG_COMBO_DISK_ROOT, "");
         Path comboDiskRootPath = null;
 
         if (!comboDiskRoot.isEmpty()) {
@@ -54,7 +50,7 @@ public class ComboHandlerVerticle extends Verticle {
           urlStyle = "singleFile";
         }
 
-        boolean syncRead = config.getBoolean(CFG_SYNC_READ, false);
+        boolean syncRead = config.getBoolean(MainVerticle.CFG_SYNC_READ, false);
 
         ExtractFileResult efr = null;
         UrlStyle us = null;
@@ -94,6 +90,6 @@ public class ComboHandlerVerticle extends Verticle {
             break;
         }
       }
-    }).listen(LISTEN_PORT_NUMBER);
+    }).listen(config.getInteger(MainVerticle.CFG_LISTEN_PORT));
   }
 }

@@ -42,10 +42,19 @@ you can set an maxMem config item,when reach this limit,cached file will be remo
 
 when url has a version number,max-age and etag header will be added.
 
+## javascript start
+
+	var container = require('vertx/container');
+	
+	var console = require('vertx/console');
+	
 	var comboConfig = {
 	    comboDiskRoot : "c:/staticyui",
 	    syncRead : false,
-	    maxMem : 1024 * 1024 * 64
+	    maxMem : 1024 * 1024 * 64,
+	    defaultMaxAge : 600,
+	    versionedMaxAge : 365 * 24 * 60 * 60,
+	    listenPort : 8093
 	};
 	container.deployVerticle('com.m3958.vertxio.vertxcombo.ComboHandlerVerticle',
 	        comboConfig, 3, function(err, deployID) {
@@ -66,6 +75,45 @@ when url has a version number,max-age and etag header will be added.
 	                console.log("Deployment failed! " + err.getMessage());
 	            }
 	        });
+
+## javasource start
+
+	public class MainVerticleSource extends Verticle {
+	  
+	  public static String VERSIONED_FILE_MAP_NAME = "combo-name-buffer";
+	  public static String CFG_COMBO_DISK_ROOT = "comboDiskRoot";
+	  public static String CFG_SYNC_READ = "syncRead";
+	  public static String CFG_MAX_MEM = "maxMem";
+	  public static String CFG_DEFAULT_MAXAGE = "defaultMaxAge";
+	  public static String CFG_VERSIONED_MAXAGE = "versionedMaxAge";
+	  public static String LISTEN_PORT = "listenPort";
+	
+	  public void start() {
+	
+	    JsonObject config =
+	        new JsonObject().putString(CFG_COMBO_DISK_ROOT, "c:/staticyui")
+	            .putBoolean(CFG_SYNC_READ, false)
+	            .putNumber(CFG_MAX_MEM, 64 * 1024 * 1024)
+	            .putNumber(LISTEN_PORT, 8093);
+	
+	
+	    container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config, 3,
+	        new AsyncResultHandler<String>() {
+	
+	          @Override
+	          public void handle(AsyncResult<String> asyncResult) {
+	            if (asyncResult.succeeded()) {
+	              System.out.println("The MainVerticleSource has been deployed, deployment ID is "
+	                  + asyncResult.result());
+	            } else {
+	              asyncResult.cause().printStackTrace();
+	            }
+	          }
+	        });
+	
+	    container.deployVerticle("com.m3958.vertxio.vertxcombo.MonitorVerticle", config, 1);
+	  }
+	}
 
 ##中文说明
 这不是一个通用的combo handler，因为所有被请求的文件都缓存在内存里面，所以您必须预先知道需要合并的文件的大小。

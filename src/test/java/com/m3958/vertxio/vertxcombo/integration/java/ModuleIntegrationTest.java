@@ -28,7 +28,7 @@ import org.vertx.java.core.http.HttpClient;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.testtools.TestVerticle;
 
-import com.m3958.vertxio.vertxcombo.ComboHandlerVerticle;
+import com.m3958.vertxio.vertxcombo.MainVerticle;
 import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
 import com.m3958.vertxio.vertxcombo.SingleFileUrl;
 import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
@@ -60,8 +60,8 @@ public class ModuleIntegrationTest extends TestVerticle {
   public void testMinifyComboHandler() {
     if (skipTest()) return;
     HttpClient client =
-        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER)
-            .setHost("localhost").setMaxPoolSize(10);
+        vertx.createHttpClient().setPort(MainVerticle.LISTEN_PORT).setHost("localhost")
+            .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
@@ -75,8 +75,8 @@ public class ModuleIntegrationTest extends TestVerticle {
   public void testYuiComboHandler() {
     if (skipTest()) return;
     HttpClient client =
-        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER)
-            .setHost("localhost").setMaxPoolSize(10);
+        vertx.createHttpClient().setPort(MainVerticle.LISTEN_PORT).setHost("localhost")
+            .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
@@ -90,8 +90,8 @@ public class ModuleIntegrationTest extends TestVerticle {
   public void testSingleFielComboHandler() {
     if (skipTest()) return;
     HttpClient client =
-        vertx.createHttpClient().setPort(ComboHandlerVerticle.LISTEN_PORT_NUMBER)
-            .setHost("localhost").setMaxPoolSize(10);
+        vertx.createHttpClient().setPort(MainVerticle.LISTEN_PORT).setHost("localhost")
+            .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 

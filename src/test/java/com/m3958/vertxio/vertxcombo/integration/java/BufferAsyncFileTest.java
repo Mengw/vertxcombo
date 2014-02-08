@@ -33,8 +33,8 @@ import org.vertx.java.core.shareddata.ConcurrentSharedMap;
 import org.vertx.testtools.TestVerticle;
 
 import com.m3958.vertxio.vertxcombo.CachedBufferSync;
-import com.m3958.vertxio.vertxcombo.ComboHandlerVerticle;
 import com.m3958.vertxio.vertxcombo.ExtractFileResult;
+import com.m3958.vertxio.vertxcombo.MainVerticle;
 import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
 import com.m3958.vertxio.vertxcombo.UrlStyle;
 import com.m3958.vertxio.vertxcombo.VersionedFile;
@@ -69,7 +69,7 @@ public class BufferAsyncFileTest extends TestVerticle {
       public void handle(AsyncResult<Buffer[]> event) {
         if (event.succeeded()) {
           ConcurrentSharedMap<String, Buffer> fbuffers =
-              vertx.sharedData().getMap(ComboHandlerVerticle.VERSIONED_FILE_MAP_NAME);
+              vertx.sharedData().getMap(MainVerticle.VERSIONED_FILE_MAP_NAME);
           assertEquals(10, fbuffers.size());
           for (VersionedFile p : efr.getFiles()) {
             assertTrue(fbuffers.containsKey(p.toString()));

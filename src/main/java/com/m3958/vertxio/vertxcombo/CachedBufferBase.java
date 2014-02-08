@@ -10,7 +10,7 @@ import org.vertx.java.core.eventbus.EventBus;
 import org.vertx.java.core.shareddata.ConcurrentSharedMap;
 
 public abstract class CachedBufferBase {
-  
+
   protected Path comboDiskRootPath;
 
   protected Vertx vertx;
@@ -24,21 +24,21 @@ public abstract class CachedBufferBase {
   protected Buffer[] buffers;
 
   protected int remaining;
-  
+
   protected EventBus eb;
 
-  public CachedBufferBase(Vertx vertx, Handler<AsyncResult<Buffer[]>> doneCb, Path comboDiskRootPath,
-      VersionedFile... infiles) {
+  public CachedBufferBase(Vertx vertx, Handler<AsyncResult<Buffer[]>> doneCb,
+      Path comboDiskRootPath, VersionedFile... infiles) {
     this.vertx = vertx;
     this.doneCb = doneCb;
     this.comboDiskRootPath = comboDiskRootPath;
     this.files = infiles;
     this.buffers = new Buffer[infiles.length];
     this.remaining = infiles.length;
-    this.fbufferMap = vertx.sharedData().getMap(ComboHandlerVerticle.VERSIONED_FILE_MAP_NAME);
+    this.fbufferMap = vertx.sharedData().getMap(MainVerticle.VERSIONED_FILE_MAP_NAME);
     this.eb = vertx.eventBus();
   }
-  
+
   protected void allDone(int i, Buffer bf) {
     this.remaining = this.remaining - 1;
     this.buffers[i] = bf;
@@ -50,21 +50,21 @@ public abstract class CachedBufferBase {
           break;
         }
       }
-      doneCb.handle(new BufferListAsyncResult(allSuccess,this.buffers));
+      doneCb.handle(new BufferListAsyncResult(allSuccess, this.buffers));
     }
   }
-  
+
   public void startRead() {
     int length = this.files.length;
     if (length == 0) {
-      doneCb.handle(new BufferListAsyncResult(false,this.buffers));
+      doneCb.handle(new BufferListAsyncResult(false, this.buffers));
       return;
     }
     for (int i = 0; i < length; i++) {
       readOne(i);
     }
   }
-  
+
   protected abstract void readOne(int i);
 
 }

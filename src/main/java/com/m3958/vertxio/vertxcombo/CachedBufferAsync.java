@@ -9,10 +9,10 @@ import org.vertx.java.core.Handler;
 import org.vertx.java.core.Vertx;
 import org.vertx.java.core.buffer.Buffer;
 
-public class CachedBufferAsync extends CachedBufferBase{
+public class CachedBufferAsync extends CachedBufferBase {
 
-  public CachedBufferAsync(Vertx vertx, Handler<AsyncResult<Buffer[]>> doneCb, Path comboDiskRootPath,
-      VersionedFile[] infiles) {
+  public CachedBufferAsync(Vertx vertx, Handler<AsyncResult<Buffer[]>> doneCb,
+      Path comboDiskRootPath, VersionedFile[] infiles) {
     super(vertx, doneCb, comboDiskRootPath, infiles);
   }
 

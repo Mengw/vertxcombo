@@ -7,10 +7,10 @@ import org.vertx.java.core.buffer.Buffer;
 public class BufferListAsyncResult implements AsyncResult<Buffer[]> {
 
   private boolean success;
-  
+
   private Buffer[] result;
 
-  public BufferListAsyncResult(boolean success,Buffer[] result) {
+  public BufferListAsyncResult(boolean success, Buffer[] result) {
     super();
     this.success = success;
     this.result = result;

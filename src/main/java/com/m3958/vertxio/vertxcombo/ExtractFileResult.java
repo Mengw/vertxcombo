@@ -24,16 +24,16 @@ public class ExtractFileResult {
   private String mimeType;
 
   private String version;
-  
+
   private String url;
 
-  public ExtractFileResult(VersionedFile[] files, String version,String url) {
+  public ExtractFileResult(VersionedFile[] files, String version, String url) {
     this.setFiles(files);
     this.setStatus(ResultStatus.SUCCESS);
     this.setUrl(url);
   }
 
-  public ExtractFileResult(Path[] paths, String version,String url) {
+  public ExtractFileResult(Path[] paths, String version, String url) {
     this.files = new VersionedFile[paths.length];
     for (int idx = 0; idx < paths.length; idx++) {
       this.files[idx] = new VersionedFile(paths[idx], version);

@@ -59,7 +59,7 @@ public class SingleFileUrl implements UrlStyle {
         return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
       }
     }
-    return new ExtractFileResult(sanitizedPathes, version,url).setMimeType();
+    return new ExtractFileResult(sanitizedPathes, version, url).setMimeType();
   }
 
   @Override

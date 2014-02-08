@@ -16,13 +16,13 @@ public class WriteBufferListResponseHandler implements Handler<AsyncResult<Buffe
 
   long defaultMaxAge;
   long versionedMaxAge;
-  
+
 
   public WriteBufferListResponseHandler(HttpServerRequest req, JsonObject config,
       ExtractFileResult fefr) {
     this.resp = req.response();
-    this.defaultMaxAge = config.getLong(ComboHandlerVerticle.CFG_DEFAULT_MAXAGE, 600);
-    this.versionedMaxAge = config.getLong(ComboHandlerVerticle.CFG_VERSIONED_MAXAGE, 31536000);
+    this.defaultMaxAge = config.getLong(MainVerticle.CFG_DEFAULT_MAXAGE, 600);
+    this.versionedMaxAge = config.getLong(MainVerticle.CFG_VERSIONED_MAXAGE, 31536000);
     this.fefr = fefr;
   }
 
@@ -37,7 +37,7 @@ public class WriteBufferListResponseHandler implements Handler<AsyncResult<Buffe
         resp.headers().set("Expires", String.valueOf(now + defaultMaxAge * 1000));
       } else {
         String etag = DigestUtils.md5Hex(fefr.getUrl());
-        resp.headers().set("Etag",etag);
+        resp.headers().set("Etag", etag);
         resp.headers().set("Cache-Control", "public,max-age=" + versionedMaxAge);
         resp.headers().set("Expires", String.valueOf(now + versionedMaxAge * 1000));
       }

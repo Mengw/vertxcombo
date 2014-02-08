@@ -12,7 +12,8 @@ var comboConfig = {
     syncRead : false,
     maxMem : 1024 * 1024 * 64,
     defaultMaxAge : 600,
-    versionedMaxAge : 365 * 24 * 60 * 60
+    versionedMaxAge : 365 * 24 * 60 * 60,
+    listenPort : 8093
 };
 container.deployVerticle('com.m3958.vertxio.vertxcombo.ComboHandlerVerticle',
         comboConfig, 3, function(err, deployID) {
