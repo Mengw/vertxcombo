@@ -31,6 +31,7 @@ public class ExtractFileResult {
     this.setFiles(files);
     this.setStatus(ResultStatus.SUCCESS);
     this.setUrl(url);
+    this.setVersion(version);
   }
 
   public ExtractFileResult(Path[] paths, String version, String url) {
@@ -39,6 +40,7 @@ public class ExtractFileResult {
       this.files[idx] = new VersionedFile(paths[idx], version);
     }
     this.setStatus(ResultStatus.SUCCESS);
+    this.setVersion(version);
     this.setUrl(url);
   }
 

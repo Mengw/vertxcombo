@@ -1,7 +1,14 @@
 package com.m3958.vertxio.vertxcombo.unit;
 
+import java.io.File;
+import java.nio.file.Files;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.m3958.vertxio.vertxcombo.ExtractFileResult;
+import com.m3958.vertxio.vertxcombo.MainVerticle;
+import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
 
 /*
  * Copyright 2013 Red Hat, Inc.
@@ -33,10 +40,30 @@ public class ExampleUnitTest {
     int idx = url.indexOf('?');
     Assert.assertEquals("", url.substring(idx + 1));
   }
-  
+
   @Test
   public void testCurDir() {
     System.out.println(System.getProperty("user.dir"));
+  }
+
+  @Test
+  public void testVersion() {
+    if (new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists()) {
+      MinifyStyleUrl ms = new MinifyStyleUrl(null, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
+      ExtractFileResult efr =
+          ms.extractFiles("http://yuimin1.fh.gov.cn/min/?&5566&f=/3.13.0/build/yui/yui-min.js");
+      Assert.assertEquals("5566", efr.getVersion());
+    }
+  }
+
+  @Test
+  public void testVersion1() {
+    if (new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists()) {
+      MinifyStyleUrl ms = new MinifyStyleUrl(null, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
+      ExtractFileResult efr =
+          ms.extractFiles("http://yuimin.fh.gov.cn/min/b=3.13.0/build&130727&f=/cssgrids/cssgrids-min.css,/cssnormalize-context/cssnormalize-context-min.css");
+      Assert.assertEquals("130727", efr.getVersion());
+    }
   }
 
 }
