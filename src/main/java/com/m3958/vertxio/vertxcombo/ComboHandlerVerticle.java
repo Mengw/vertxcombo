@@ -13,7 +13,7 @@ public class ComboHandlerVerticle extends Verticle {
 
 
   public void start() {
-    
+
     final JsonObject config = container.config();
 
     vertx.createHttpServer().requestHandler(new Handler<HttpServerRequest>() {
@@ -22,7 +22,7 @@ public class ComboHandlerVerticle extends Verticle {
 
         final HttpServerResponse resp = req.response();
         String uri = req.uri();
-
+        System.out.println(uri);
         String comboDiskRoot = config.getString(MainVerticle.CFGKEY_COMBO_DISK_ROOT, "");
         Path comboDiskRootPath = null;
 

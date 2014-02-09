@@ -18,7 +18,7 @@ create a config file named conf.json in any folder,write content bellow:
 
 enter created folder,type command bellow:
 
-	vertx runmod com.m3958.vertxio~vertxcombo~0.0.1.3 -conf conf.json
+	vertx runmod com.m3958.vertxio~vertxcombo~0.0.1.5 -conf conf.json
 
 vertx will download and start the module.
 
