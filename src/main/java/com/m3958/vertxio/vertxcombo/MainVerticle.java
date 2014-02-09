@@ -4,6 +4,8 @@ package com.m3958.vertxio.vertxcombo;
  * @author jianglibo@gmail.com
  */
 
+import java.io.File;
+
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.json.JsonObject;
@@ -20,7 +22,7 @@ public class MainVerticle extends Verticle {
   public static String CFGKEY_LISTEN_PORT = "listenPort";
   
   public static int CFGVALUE_LISTEN_PORT = 8093;
-  public static String CFGVALUE_COMBO_DISK_ROOT = "c:/staticyui";
+  public static String CFGVALUE_COMBO_DISK_ROOT = File.separatorChar == '/' ? "/opt/staticyui" :"c:/staticyui";
   public static long CFGVALUE_MAX_MEM = 64 * 1024 * 1024;
 
   public void start() {

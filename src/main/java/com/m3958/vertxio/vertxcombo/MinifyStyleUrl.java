@@ -117,5 +117,4 @@ public class MinifyStyleUrl implements UrlStyle {
     }
     return null;
   }
-
 }

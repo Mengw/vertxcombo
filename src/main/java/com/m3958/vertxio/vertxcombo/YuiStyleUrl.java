@@ -42,6 +42,9 @@ public class YuiStyleUrl implements UrlStyle {
     for (int i = 0; i < fns.length; i++) {
       String fn = fns[i];
       fn = fn.replace(unwantedFsep, fsep);
+      if (fn.isEmpty()) {
+        continue;
+      }
       if (fn.charAt(0) == fsep) {
         fn = fn.substring(1);
       }
