@@ -5,7 +5,7 @@ public abstract class UrlStyle {
 
   protected String sanitizeUrl(String originUrl) {
     if (originUrl.endsWith("?")) {
-      return originUrl.substring(0, originUrl.length() - 2);
+      return originUrl.substring(0, originUrl.length() - 1);
     } else {
       return originUrl;
     }

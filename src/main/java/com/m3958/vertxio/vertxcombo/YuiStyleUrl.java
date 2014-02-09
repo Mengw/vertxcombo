@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import org.vertx.java.core.logging.Logger;
@@ -31,16 +32,22 @@ public class YuiStyleUrl extends UrlStyle {
     int qidx = url.indexOf('?');
     // /combo/version?
     String version = url.substring(0, qidx);
-
-    String[] fns = url.substring(qidx + 1).split("&");
+    String fnPart = url.substring(qidx + 1);
+    if (fnPart.startsWith("&")) {
+      fnPart = fnPart.substring(1);
+    }
+    String[] fns = fnPart.split("&");
 
     char fsep = File.separatorChar;
     char unwantedFsep = fsep == '/' ? '\\' : '/';
 
     Path[] sanitizedPathes = new Path[fns.length];
 
-    for (int i = 0; i < fns.length; i++) {
+    FN_LOOP: for (int i = 0; i < fns.length; i++) {
       String fn = fns[i];
+      if (fn.isEmpty()) {
+        continue FN_LOOP;
+      }
       fn = fn.replace(unwantedFsep, fsep);
       if (fn.charAt(0) == fsep) {
         fn = fn.substring(1);

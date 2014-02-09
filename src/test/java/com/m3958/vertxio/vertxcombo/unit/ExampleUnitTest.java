@@ -17,6 +17,28 @@ import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
  * @author jianglibo@gmail.com
  */
 public class ExampleUnitTest {
+  
+  @Test
+  public void testOnefile() {
+    String url = "/ff.js?123";
+    int qidx = url.indexOf('?');
+    String version = url.substring(qidx + 1);
+    String onefn = url.substring(0, qidx);
+    
+    Assert.assertEquals("/ff.js", onefn);
+    Assert.assertEquals("123", version);
+  }
+  
+  @Test
+  public void testOnefile1() {
+    String url = "/ff.js?";
+    int qidx = url.indexOf('?');
+    String version = url.substring(qidx + 1);
+    String onefn = url.substring(0, qidx);
+    
+    Assert.assertEquals("/ff.js", onefn);
+    Assert.assertEquals("", version);
+  }
 
   @Test
   public void testSubUrl() {
@@ -30,6 +52,20 @@ public class ExampleUnitTest {
     String url = "/combo?";
     int idx = url.indexOf('?');
     Assert.assertEquals("", url.substring(idx + 1));
+  }
+  
+  @Test
+  public void testSubUrl2() {
+    String url = "/combo?";
+    url = url.substring(0, url.length() - 1);
+    Assert.assertEquals("/combo", url);
+  }
+  
+  @Test
+  public void testSubUrl3() {
+    String url = "/?";
+    url = url.substring(0, url.length() - 1);
+    Assert.assertEquals("/", url);
   }
 
   @Test
@@ -78,6 +114,23 @@ public class ExampleUnitTest {
     UrlStyle ms = new YuiStyleUrl(null, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     ExtractFileResult efr =
         ms.extractFiles("/combo/130727?3.12.0/build/yui-base/yui-base-min.js&3.12.0/build/loader-base/loader-base-min.js&3.12.0/build/loader-yui3/loader-yui3-min.js");
+    Assert.assertEquals("/combo/130727", efr.getVersion());
+    printMe(efr.getVersion());
+    Assert.assertEquals(3, efr.getFiles().length);
+    printMe(efr.getFiles().length);
+    Assert.assertEquals(ExtractFileResult.ResultStatus.SUCCESS, efr.getStatus());
+    Assert.assertEquals(ExtractFileResult.MIME_TYPES_JS, efr.getMimeType());
+  }
+  
+  /**
+   * append a & before query string.
+   */
+  @Test
+  public void testUrl3() {
+    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+    UrlStyle ms = new YuiStyleUrl(null, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
+    ExtractFileResult efr =
+        ms.extractFiles("/combo/130727?&3.12.0/build/yui-base/yui-base-min.js&3.12.0/build/loader-base/loader-base-min.js&3.12.0/build/loader-yui3/loader-yui3-min.js");
     Assert.assertEquals("/combo/130727", efr.getVersion());
     printMe(efr.getVersion());
     Assert.assertEquals(3, efr.getFiles().length);
