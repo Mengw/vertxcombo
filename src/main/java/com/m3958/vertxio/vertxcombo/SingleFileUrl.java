@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 import org.vertx.java.core.logging.Logger;
 
-public class SingleFileUrl implements UrlStyle {
+public class SingleFileUrl extends UrlStyle {
 
   // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js
   private Logger logger;
@@ -27,6 +27,7 @@ public class SingleFileUrl implements UrlStyle {
   @Override
   public ExtractFileResult extractFiles(String url) {
     // /build/yui/yui-min.js?5566
+    url = sanitizeUrl(url);
     int qidx = url.indexOf('?');
 
     String onefn;

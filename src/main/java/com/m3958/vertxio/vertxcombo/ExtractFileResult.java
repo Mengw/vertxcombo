@@ -103,7 +103,7 @@ public class ExtractFileResult {
   }
 
   public String getVersion() {
-    if(version == null){
+    if (version == null) {
       return "";
     }
     return version;

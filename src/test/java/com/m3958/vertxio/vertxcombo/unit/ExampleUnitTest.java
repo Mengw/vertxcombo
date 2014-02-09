@@ -50,7 +50,7 @@ public class ExampleUnitTest {
     Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
     MinifyStyleUrl ms = new MinifyStyleUrl(null, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     ExtractFileResult efr =
-        ms.extractFiles("/min/b=3.13.0/build&130727&f=/cssgrids/cssgrids-min.css,/cssnormalize-context/cssnormalize-context-min.css");
+        ms.extractFiles("/min/b=3.13.0/build&130727&f=/cssgrids/cssgrids-min.css,/cssnormalize-context/cssnormalize-context-min.css?");
     Assert.assertEquals("130727", efr.getVersion());
     Assert.assertEquals(2, efr.getFiles().length);
     Assert.assertEquals(ExtractFileResult.ResultStatus.SUCCESS, efr.getStatus());
@@ -63,7 +63,7 @@ public class ExampleUnitTest {
 
     MinifyStyleUrl ms = new MinifyStyleUrl(null, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     ExtractFileResult efr =
-        ms.extractFiles("/min/f=3.12.0/build/cssreset/cssreset.css,3.12.0/build/cssfonts/cssfonts.css,3.12.0/build/cssgrids/cssgrids.css");
+        ms.extractFiles("/min/f=3.12.0/build/cssreset/cssreset.css,3.12.0/build/cssfonts/cssfonts.css,3.12.0/build/cssgrids/cssgrids.css?");
     Assert.assertEquals("", efr.getVersion());
     printMe(efr.getVersion());
     Assert.assertEquals(3, efr.getFiles().length);

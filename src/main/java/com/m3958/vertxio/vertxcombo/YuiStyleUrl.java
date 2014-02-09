@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.vertx.java.core.logging.Logger;
 
-public class YuiStyleUrl implements UrlStyle {
+public class YuiStyleUrl extends UrlStyle {
 
   // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js
   private Logger logger;
@@ -27,7 +27,7 @@ public class YuiStyleUrl implements UrlStyle {
 
   @Override
   public ExtractFileResult extractFiles(String url) {
-
+    url = sanitizeUrl(url);
     int qidx = url.indexOf('?');
     // /combo/version?
     String version = url.substring(0, qidx);
@@ -42,9 +42,6 @@ public class YuiStyleUrl implements UrlStyle {
     for (int i = 0; i < fns.length; i++) {
       String fn = fns[i];
       fn = fn.replace(unwantedFsep, fsep);
-      if (fn.isEmpty()) {
-        continue;
-      }
       if (fn.charAt(0) == fsep) {
         fn = fn.substring(1);
       }
