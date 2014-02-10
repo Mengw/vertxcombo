@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileTypeDetector;
 
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.detect.Detector;
@@ -16,8 +15,6 @@ import org.apache.tika.mime.MediaType;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
-
-import sun.nio.fs.DefaultFileTypeDetector;
 
 import com.m3958.vertxio.vertxcombo.ExtractFileResult;
 import com.m3958.vertxio.vertxcombo.MainVerticle;
@@ -57,12 +54,12 @@ public class ExampleUnitTest {
 
   }
 
-  @Test
-  public void testFileTypeDetector() {
-    FileTypeDetector fileTypeDetector = DefaultFileTypeDetector.create();
-    System.out.println("DefaultFileTypeDetector class : "
-        + fileTypeDetector.getClass().getCanonicalName());
-  }
+  // @Test
+  // public void testFileTypeDetector() {
+  // FileTypeDetector fileTypeDetector = DefaultFileTypeDetector.create();
+  // System.out.println("DefaultFileTypeDetector class : "
+  // + fileTypeDetector.getClass().getCanonicalName());
+  // }
 
   @Test
   public void testMimeType() {
