@@ -13,7 +13,7 @@ var comboConfig = {
     maxMem : 1024 * 1024 * 64,
     defaultMaxAge : 600,
     versionedMaxAge : 365 * 24 * 60 * 60,
-    listenPort : 8093,
+    listenPort : 8094,
     instances : 5,
     charset : "UTF-8"
 };
