@@ -25,13 +25,14 @@ public class MainVerticle extends Verticle {
   public static String CFGKEY_CHARSET = "charset";
 
   public static int CFGVALUE_LISTEN_PORT = 8093;
+
   public static String CFGVALUE_COMBO_DISK_ROOT = File.separatorChar == '/'
       ? "/opt/staticyui"
       : "c:/staticyui";
   public static long CFGVALUE_MAX_MEM = 64 * 1024 * 1024;
   public static int CFGVALUE_INSTANCES = 5;
   public static String CFGVALUE_CHARSET = "UTF-8";
-
+  
   public void start() {
     JsonObject configc = container.config();
 

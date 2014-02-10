@@ -1,8 +1,14 @@
 package com.m3958.vertxio.vertxcombo;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.detect.Detector;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 
 
 public class ExtractFileResult {
@@ -131,13 +137,29 @@ public class ExtractFileResult {
     } else if (".json".equalsIgnoreCase(MIME_TYPES_JSON)) {
       mimeType = MIME_TYPES_JSON + "; charset=UTF-8";
     } else {
-      try {
-        mimeType = Files.probeContentType(comboDiskRootPath.resolve(getFiles()[0].getFile()));
-      } catch (IOException e) {}
+      mimeType = tikaProbe(comboDiskRootPath.resolve(getFiles()[0].getFile()));
     }
     if (mimeType == null) {
       mimeType = MIME_TYPES_UNKNOWN;
     }
     return mimeType;
+  }
+
+  private String tikaProbe(Path p) {
+    TikaConfig config = TikaConfig.getDefaultConfig();
+    Detector detector = config.getDetector();
+
+    try {
+      TikaInputStream stream = TikaInputStream.get(p.toFile());
+      Metadata metadata = new Metadata();
+      metadata.add(Metadata.RESOURCE_NAME_KEY, p.toString());
+      MediaType mediaType = detector.detect(stream, metadata);
+      return mediaType.toString();
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }
