@@ -27,7 +27,7 @@ public class MainVerticleSource extends Verticle {
       ? "/opt/staticyui"
       : "c:/staticyui";
   public static long CFGVALUE_MAX_MEM = 64 * 1024 * 1024;
-  public static int CFGVALUE_INSTANCES = 1;
+  public static int CFGVALUE_INSTANCES = 2;
   public static String CFGVALUE_CHARSET = "UTF-8";
 
   public void start() {

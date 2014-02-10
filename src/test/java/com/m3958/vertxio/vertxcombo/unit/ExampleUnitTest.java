@@ -61,19 +61,19 @@ public class ExampleUnitTest {
   // + fileTypeDetector.getClass().getCanonicalName());
   // }
 
-  @Test
-  public void testMimeType() {
-    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-    Path p =
-        Paths.get(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).resolve(
-            "3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png");
-    try {
-      String mimeType = Files.probeContentType(p);
-      Assert.assertEquals("image/png", mimeType);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
+  //  @Test
+  //  public void testMimeType() {
+  //    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+  //    Path p =
+  //        Paths.get(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).resolve(
+  //            "3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png");
+  //    try {
+  //      String mimeType = Files.probeContentType(p);
+  //      Assert.assertEquals("image/png", mimeType);
+  //    } catch (IOException e) {
+  //      e.printStackTrace();
+  //    }
+  //  }
 
   @Test
   public void testOnefile() {
