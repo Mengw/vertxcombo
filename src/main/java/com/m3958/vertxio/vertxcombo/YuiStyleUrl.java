@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 import org.vertx.java.core.logging.Logger;
@@ -60,7 +59,7 @@ public class YuiStyleUrl extends UrlStyle {
         return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
       }
     }
-    return new ExtractFileResult(sanitizedPathes, version, url).setMimeType();
+    return new ExtractFileResult(comboDiskRootPath, sanitizedPathes, version, url).setMimeType();
   }
 
   @Override

@@ -60,7 +60,7 @@ public class SingleFileUrl extends UrlStyle {
         return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
       }
     }
-    return new ExtractFileResult(sanitizedPathes, version, url).setMimeType();
+    return new ExtractFileResult(comboDiskRootPath, sanitizedPathes, version, url).setMimeType();
   }
 
   @Override

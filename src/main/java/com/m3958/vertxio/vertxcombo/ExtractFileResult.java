@@ -1,5 +1,7 @@
 package com.m3958.vertxio.vertxcombo;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 
@@ -27,14 +29,17 @@ public class ExtractFileResult {
 
   private String url;
 
-  public ExtractFileResult(VersionedFile[] files, String version, String url) {
+  private Path comboDiskRootPath;
+
+  public ExtractFileResult(Path comboDiskRootPath, VersionedFile[] files, String version, String url) {
     this.setFiles(files);
     this.setStatus(ResultStatus.SUCCESS);
     this.setUrl(url);
     this.setVersion(version);
+    this.comboDiskRootPath = comboDiskRootPath;
   }
 
-  public ExtractFileResult(Path[] paths, String version, String url) {
+  public ExtractFileResult(Path comboDiskRootPath, Path[] paths, String version, String url) {
     this.files = new VersionedFile[paths.length];
     for (int idx = 0; idx < paths.length; idx++) {
       this.files[idx] = new VersionedFile(paths[idx], version);
@@ -42,6 +47,7 @@ public class ExtractFileResult {
     this.setStatus(ResultStatus.SUCCESS);
     this.setVersion(version);
     this.setUrl(url);
+    this.comboDiskRootPath = comboDiskRootPath;
   }
 
   public ExtractFileResult(ResultStatus status) {
@@ -82,19 +88,12 @@ public class ExtractFileResult {
       setStatus(ResultStatus.FILE_NOT_FOUND);
     } else {
       String fn = getFiles()[0].getFile().getFileName().toString();
-      int idx = fn.lastIndexOf('.');
-      String ext = idx == -1 ? "" : fn.substring(idx);
-      if (".js".equalsIgnoreCase(ext)) {
-        this.mimeType = MIME_TYPES_JS;
-      } else if (".css".equalsIgnoreCase(ext)) {
-        this.mimeType = MIME_TYPES_CSS;
-      } else if (".json".equalsIgnoreCase(MIME_TYPES_JSON)) {
-        this.mimeType = MIME_TYPES_JSON;
-      } else {
-        this.mimeType = MIME_TYPES_UNKNOWN;
-        setStatus(ResultStatus.UNKNOWN_MIMETYPE);
-      }
+      this.mimeType = probeMimeType(fn);
     }
+    if (MIME_TYPES_UNKNOWN.equals(this.mimeType)) {
+      setStatus(ResultStatus.UNKNOWN_MIMETYPE);
+    }
+
     return this;
   }
 
@@ -119,5 +118,26 @@ public class ExtractFileResult {
 
   public void setUrl(String url) {
     this.url = url;
+  }
+
+  private String probeMimeType(String fn) {
+    int idx = fn.lastIndexOf('.');
+    String mimeType = null;
+    String ext = idx == -1 ? "" : fn.substring(idx);
+    if (".js".equalsIgnoreCase(ext)) {
+      mimeType = MIME_TYPES_JS + "; charset=UTF-8";
+    } else if (".css".equalsIgnoreCase(ext)) {
+      mimeType = MIME_TYPES_CSS + "; charset=UTF-8";
+    } else if (".json".equalsIgnoreCase(MIME_TYPES_JSON)) {
+      mimeType = MIME_TYPES_JSON + "; charset=UTF-8";
+    } else {
+      try {
+        mimeType = Files.probeContentType(comboDiskRootPath.resolve(getFiles()[0].getFile()));
+      } catch (IOException e) {}
+    }
+    if (mimeType == null) {
+      mimeType = MIME_TYPES_UNKNOWN;
+    }
+    return mimeType;
   }
 }

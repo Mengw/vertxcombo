@@ -13,12 +13,14 @@ create a config file named conf.json in any folder,write content bellow:
 	    "maxMem" : 67108864,
 	    "defaultMaxAge" : 600,
 	    "versionedMaxAge" : 31536000,
-	    "listenPort" : 8093
+	    "listenPort" : 8093,
+	    "instances" : 5,
+	    "charset" : "UTF-8"
 	}
 
 enter created folder,type command bellow:
 
-	vertx runmod com.m3958.vertxio~vertxcombo~0.0.1.5 -conf conf.json
+	vertx runmod com.m3958.vertxio~vertxcombo~0.0.1.6 -conf conf.json
 
 vertx will download and start the module.
 
@@ -26,19 +28,22 @@ vertx will download and start the module.
 
 when you look at test code,there are code as below:
 
-	  public static String comboRoot = "c:/staticyui";
+	  @Test
+	  public void testMinifyComboHandler() {
+	    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+	    HttpClient client =
+	        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
+	            .setMaxPoolSize(10);
 	
-	  private boolean skipTest() {
-	    if (vertx.fileSystem().existsSync(comboRoot)) {
-	      return false;
-	    } else {
-	      Assert.assertTrue(true);
-	      testComplete();
-	      return true;
-	    }
+	    final Logger log = container.logger();
+	
+	    MinifyStyleUrl msu = new MinifyStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
+	    String url = msu.generateRandomUrl("*.js", 10, "345");
+	    log.info(url);
+	    client.getNow(url, new TestComboResponseHandler(container));
 	  }
 
-if your machine hasn't this folder,test will be skip.
+if your machine hasn't MainVerticle.CFGVALUE_COMBO_DISK_ROOT folder,test will be skip.
 
 ## supported url pattern
 
@@ -72,10 +77,12 @@ when url has a version number,max-age and etag header will be added.
 	    maxMem : 1024 * 1024 * 64,
 	    defaultMaxAge : 600,
 	    versionedMaxAge : 365 * 24 * 60 * 60,
-	    listenPort : 8093
+	    listenPort : 8093,
+	    instances : 5,
+	    charset : "UTF-8"
 	};
 	container.deployVerticle('com.m3958.vertxio.vertxcombo.ComboHandlerVerticle',
-	        comboConfig, 3, function(err, deployID) {
+	        comboConfig, comboConfig.instances, function(err, deployID) {
 	            if (!err) {
 	                console.log("The verticle has been deployed, deployment ID is "
 	                        + deployID);
@@ -97,31 +104,51 @@ when url has a version number,max-age and etag header will be added.
 ## javasource start
 
 	public class MainVerticleSource extends Verticle {
-	  
+	
 	  public static String VERSIONED_FILE_MAP_NAME = "combo-name-buffer";
-	  public static String CFG_COMBO_DISK_ROOT = "comboDiskRoot";
-	  public static String CFG_SYNC_READ = "syncRead";
-	  public static String CFG_MAX_MEM = "maxMem";
-	  public static String CFG_DEFAULT_MAXAGE = "defaultMaxAge";
-	  public static String CFG_VERSIONED_MAXAGE = "versionedMaxAge";
-	  public static String LISTEN_PORT = "listenPort";
+	  public static String CFGKEY_COMBO_DISK_ROOT = "comboDiskRoot";
+	  public static String CFGKEY_SYNC_READ = "syncRead";
+	  public static String CFGKEY_MAX_MEM = "maxMem";
+	  public static String CFGKEY_DEFAULT_MAXAGE = "defaultMaxAge";
+	  public static String CFGKEY_VERSIONED_MAXAGE = "versionedMaxAge";
+	  public static String CFGKEY_LISTEN_PORT = "listenPort";
+	  public static String CFGKEY_INSTANCES = "instances";
+	  public static String CFGKEY_CHARSET = "charset";
+	
+	  public static int CFGVALUE_LISTEN_PORT = 8093;
+	  public static String CFGVALUE_COMBO_DISK_ROOT = File.separatorChar == '/'
+	      ? "/opt/staticyui"
+	      : "c:/staticyui";
+	  public static long CFGVALUE_MAX_MEM = 64 * 1024 * 1024;
+	  public static int CFGVALUE_INSTANCES = 1;
+	  public static String CFGVALUE_CHARSET = "UTF-8";
 	
 	  public void start() {
+	    JsonObject configc = container.config();
+	
+	    Logger log = container.logger();
 	
 	    JsonObject config =
-	        new JsonObject().putString(CFG_COMBO_DISK_ROOT, "c:/staticyui")
-	            .putBoolean(CFG_SYNC_READ, false)
-	            .putNumber(CFG_MAX_MEM, 64 * 1024 * 1024)
-	            .putNumber(LISTEN_PORT, 8093);
+	        new JsonObject().putString(CFGKEY_COMBO_DISK_ROOT, CFGVALUE_COMBO_DISK_ROOT)
+	            .putBoolean(CFGKEY_SYNC_READ, false).putNumber(CFGKEY_MAX_MEM, CFGVALUE_MAX_MEM)
+	            .putNumber(CFGKEY_LISTEN_PORT, CFGVALUE_LISTEN_PORT)
+	            .putNumber(CFGKEY_INSTANCES, CFGVALUE_INSTANCES)
+	            .putString(CFGKEY_CHARSET, CFGVALUE_CHARSET);
+	
+	    config.mergeIn(configc);
 	
 	
-	    container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config, 3,
-	        new AsyncResultHandler<String>() {
+	
+	    log.info("final config: ");
+	    log.info(config.toString());
+	
+	    container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config,
+	        config.getInteger(CFGKEY_INSTANCES), new AsyncResultHandler<String>() {
 	
 	          @Override
 	          public void handle(AsyncResult<String> asyncResult) {
 	            if (asyncResult.succeeded()) {
-	              System.out.println("The MainVerticleSource has been deployed, deployment ID is "
+	              System.out.println("The verticle has been deployed, deployment ID is "
 	                  + asyncResult.result());
 	            } else {
 	              asyncResult.cause().printStackTrace();

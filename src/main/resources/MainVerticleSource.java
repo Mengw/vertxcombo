@@ -19,10 +19,16 @@ public class MainVerticleSource extends Verticle {
   public static String CFGKEY_DEFAULT_MAXAGE = "defaultMaxAge";
   public static String CFGKEY_VERSIONED_MAXAGE = "versionedMaxAge";
   public static String CFGKEY_LISTEN_PORT = "listenPort";
+  public static String CFGKEY_INSTANCES = "instances";
+  public static String CFGKEY_CHARSET = "charset";
 
   public static int CFGVALUE_LISTEN_PORT = 8093;
-  public static String CFGVALUE_COMBO_DISK_ROOT = File.separatorChar == '/' ? "/opt/staticyui" :"c:/staticyui";
+  public static String CFGVALUE_COMBO_DISK_ROOT = File.separatorChar == '/'
+      ? "/opt/staticyui"
+      : "c:/staticyui";
   public static long CFGVALUE_MAX_MEM = 64 * 1024 * 1024;
+  public static int CFGVALUE_INSTANCES = 1;
+  public static String CFGVALUE_CHARSET = "UTF-8";
 
   public void start() {
     JsonObject configc = container.config();
@@ -32,14 +38,19 @@ public class MainVerticleSource extends Verticle {
     JsonObject config =
         new JsonObject().putString(CFGKEY_COMBO_DISK_ROOT, CFGVALUE_COMBO_DISK_ROOT)
             .putBoolean(CFGKEY_SYNC_READ, false).putNumber(CFGKEY_MAX_MEM, CFGVALUE_MAX_MEM)
-            .putNumber(CFGKEY_LISTEN_PORT, CFGVALUE_LISTEN_PORT);
+            .putNumber(CFGKEY_LISTEN_PORT, CFGVALUE_LISTEN_PORT)
+            .putNumber(CFGKEY_INSTANCES, CFGVALUE_INSTANCES)
+            .putString(CFGKEY_CHARSET, CFGVALUE_CHARSET);
 
     config.mergeIn(configc);
+
+
+
     log.info("final config: ");
     log.info(config.toString());
 
-    container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config, 3,
-        new AsyncResultHandler<String>() {
+    container.deployVerticle("com.m3958.vertxio.vertxcombo.ComboHandlerVerticle", config,
+        config.getInteger(CFGKEY_INSTANCES), new AsyncResultHandler<String>() {
 
           @Override
           public void handle(AsyncResult<String> asyncResult) {

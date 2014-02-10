@@ -20,10 +20,11 @@ import static org.vertx.testtools.VertxAssert.assertEquals;
 import static org.vertx.testtools.VertxAssert.assertTrue;
 import static org.vertx.testtools.VertxAssert.testComplete;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Handler;
@@ -44,19 +45,9 @@ import com.m3958.vertxio.vertxcombo.VersionedFile;
  */
 public class BufferAsyncFileTest extends TestVerticle {
 
-  private boolean skipTest() {
-    if (vertx.fileSystem().existsSync(MainVerticle.CFGVALUE_COMBO_DISK_ROOT)) {
-      return false;
-    } else {
-      Assert.assertTrue(true);
-      testComplete();
-      return true;
-    }
-  }
-
   @Test
   public void testBuffer() {
-    if (skipTest()) return;
+    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
     final Logger log = container.logger();
     Path comboDiskRootPath = Paths.get(MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     UrlStyle us = new MinifyStyleUrl(container.logger(), comboDiskRootPath);

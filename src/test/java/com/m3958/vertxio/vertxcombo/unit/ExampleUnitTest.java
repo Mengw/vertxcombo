@@ -1,6 +1,10 @@
 package com.m3958.vertxio.vertxcombo.unit;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.Assume;
@@ -17,25 +21,39 @@ import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
  * @author jianglibo@gmail.com
  */
 public class ExampleUnitTest {
-  
+
+  @Test
+  public void testMimeType() {
+    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+    Path p =
+        Paths.get(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).resolve(
+            "/3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png");
+    try {
+      String mimeType = Files.probeContentType(p);
+      Assert.assertEquals("image/png", mimeType);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Test
   public void testOnefile() {
     String url = "/ff.js?123";
     int qidx = url.indexOf('?');
     String version = url.substring(qidx + 1);
     String onefn = url.substring(0, qidx);
-    
+
     Assert.assertEquals("/ff.js", onefn);
     Assert.assertEquals("123", version);
   }
-  
+
   @Test
   public void testOnefile1() {
     String url = "/ff.js?";
     int qidx = url.indexOf('?');
     String version = url.substring(qidx + 1);
     String onefn = url.substring(0, qidx);
-    
+
     Assert.assertEquals("/ff.js", onefn);
     Assert.assertEquals("", version);
   }
@@ -53,14 +71,14 @@ public class ExampleUnitTest {
     int idx = url.indexOf('?');
     Assert.assertEquals("", url.substring(idx + 1));
   }
-  
+
   @Test
   public void testSubUrl2() {
     String url = "/combo?";
     url = url.substring(0, url.length() - 1);
     Assert.assertEquals("/combo", url);
   }
-  
+
   @Test
   public void testSubUrl3() {
     String url = "/?";
@@ -90,7 +108,7 @@ public class ExampleUnitTest {
     Assert.assertEquals("130727", efr.getVersion());
     Assert.assertEquals(2, efr.getFiles().length);
     Assert.assertEquals(ExtractFileResult.ResultStatus.SUCCESS, efr.getStatus());
-    Assert.assertEquals(ExtractFileResult.MIME_TYPES_CSS, efr.getMimeType());
+    Assert.assertEquals(createMimeType(ExtractFileResult.MIME_TYPES_CSS), efr.getMimeType());
   }
 
   @Test
@@ -105,7 +123,7 @@ public class ExampleUnitTest {
     Assert.assertEquals(3, efr.getFiles().length);
     printMe(efr.getFiles().length);
     Assert.assertEquals(ExtractFileResult.ResultStatus.SUCCESS, efr.getStatus());
-    Assert.assertEquals(ExtractFileResult.MIME_TYPES_CSS, efr.getMimeType());
+    Assert.assertEquals(createMimeType(ExtractFileResult.MIME_TYPES_CSS), efr.getMimeType());
   }
 
   @Test
@@ -119,9 +137,9 @@ public class ExampleUnitTest {
     Assert.assertEquals(3, efr.getFiles().length);
     printMe(efr.getFiles().length);
     Assert.assertEquals(ExtractFileResult.ResultStatus.SUCCESS, efr.getStatus());
-    Assert.assertEquals(ExtractFileResult.MIME_TYPES_JS, efr.getMimeType());
+    Assert.assertEquals(createMimeType(ExtractFileResult.MIME_TYPES_JS), efr.getMimeType());
   }
-  
+
   /**
    * append a & before query string.
    */
@@ -136,10 +154,12 @@ public class ExampleUnitTest {
     Assert.assertEquals(3, efr.getFiles().length);
     printMe(efr.getFiles().length);
     Assert.assertEquals(ExtractFileResult.ResultStatus.SUCCESS, efr.getStatus());
-    Assert.assertEquals(ExtractFileResult.MIME_TYPES_JS, efr.getMimeType());
+    Assert.assertEquals(createMimeType(ExtractFileResult.MIME_TYPES_JS), efr.getMimeType());
   }
 
-
+  private String createMimeType(String mimePrefix){
+    return mimePrefix + "; charset=" + MainVerticle.CFGVALUE_CHARSET;
+  }
 
   private void printMe(Object o) {
     if (o == null) {

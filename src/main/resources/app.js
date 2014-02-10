@@ -13,10 +13,12 @@ var comboConfig = {
     maxMem : 1024 * 1024 * 64,
     defaultMaxAge : 600,
     versionedMaxAge : 365 * 24 * 60 * 60,
-    listenPort : 8093
+    listenPort : 8093,
+    instances : 5,
+    charset : "UTF-8"
 };
 container.deployVerticle('com.m3958.vertxio.vertxcombo.ComboHandlerVerticle',
-        comboConfig, 3, function(err, deployID) {
+        comboConfig, comboConfig.instances, function(err, deployID) {
             if (!err) {
                 console.log("The verticle has been deployed, deployment ID is "
                         + deployID);

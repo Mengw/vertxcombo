@@ -18,9 +18,10 @@ package com.m3958.vertxio.vertxcombo.integration.java;
 
 import static org.vertx.testtools.VertxAssert.assertNotNull;
 import static org.vertx.testtools.VertxAssert.assertTrue;
-import static org.vertx.testtools.VertxAssert.testComplete;
 
-import org.junit.Assert;
+import java.io.File;
+
+import org.junit.Assume;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
@@ -31,71 +32,85 @@ import org.vertx.testtools.TestVerticle;
 import com.m3958.vertxio.vertxcombo.MainVerticle;
 import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
 import com.m3958.vertxio.vertxcombo.SingleFileUrl;
+import com.m3958.vertxio.vertxcombo.UrlStyle;
 import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
 
 /**
- * Example Java integration test that deploys the module that this project builds.
- * 
- * Quite often in integration tests you want to deploy the same module for all tests and you don't
- * want tests to start before the module has been deployed.
- * 
- * This test demonstrates how to do that.
  */
 public class ModuleIntegrationTest extends TestVerticle {
 
-  private boolean skipTest() {
-    if (vertx.fileSystem().existsSync(MainVerticle.CFGVALUE_COMBO_DISK_ROOT)) {
-
-      return false;
-    } else {
-      Assert.assertTrue(true);
-      testComplete();
-      return true;
-    }
-  }
-
   @Test
-  public void testMinifyComboHandler() {
-    if (skipTest()) return;
+  public void testNonJsCss() {
+    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
     HttpClient client =
         vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
             .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
-    MinifyStyleUrl msu = new MinifyStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
+    String url =
+        "/3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png";
+    log.info("start test url: " + url);
+    client.getNow(url, new TestComboResponseHandler(container));
+  }
+  
+  @Test
+  public void testNonJsCss1() {
+    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+    HttpClient client =
+        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
+            .setMaxPoolSize(10);
+
+    final Logger log = container.logger();
+
+    String url =
+        "/3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png?abcd";
+    log.info("start test url: " + url);
+    client.getNow(url, new TestComboResponseHandler(container));
+  }
+
+  @Test
+  public void testMinifyComboHandler() {
+    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+    HttpClient client =
+        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
+            .setMaxPoolSize(10);
+
+    final Logger log = container.logger();
+
+    UrlStyle msu = new MinifyStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     String url = msu.generateRandomUrl("*.js", 10, "345");
-    log.info(url);
+    log.info("start test url: " + url);
     client.getNow(url, new TestComboResponseHandler(container));
   }
 
   @Test
   public void testYuiComboHandler() {
-    if (skipTest()) return;
+    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
     HttpClient client =
         vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
             .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
-    YuiStyleUrl msu = new YuiStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
+    UrlStyle msu = new YuiStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     String url = msu.generateRandomUrl("*.js", 10, "345");
-    log.info(url);
+    log.info("start test url: " + url);
     client.getNow(url, new TestComboResponseHandler(container));
   }
 
   @Test
   public void testSingleFielComboHandler() {
-    if (skipTest()) return;
+    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
     HttpClient client =
         vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
             .setMaxPoolSize(10);
 
     final Logger log = container.logger();
 
-    SingleFileUrl msu = new SingleFileUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
+    UrlStyle msu = new SingleFileUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
     String url = msu.generateRandomUrl("*.js", 10, "345");
-    log.info(url);
+    log.info("start test url: " + url);
     client.getNow(url, new TestComboResponseHandler(container));
   }
 

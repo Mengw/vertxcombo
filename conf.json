@@ -4,5 +4,7 @@
     "maxMem" : 67108864,
     "defaultMaxAge" : 600,
     "versionedMaxAge" : 31536000,
-    "listenPort" : 8093
+    "listenPort" : 8093,
+    "instances" : 5,
+    "charset" : "UTF-8"
 }

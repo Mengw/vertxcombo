@@ -31,7 +31,7 @@ public class WriteBufferListResponseHandler implements Handler<AsyncResult<Buffe
   public void handle(AsyncResult<Buffer[]> event) {
     if (event.succeeded()) {
       long now = System.currentTimeMillis();
-      resp.headers().set("Content-Type", fefr.getMimeType() + "; charset=UTF-8");
+      resp.headers().set("Content-Type", fefr.getMimeType());
       if (fefr.getVersion() == null || fefr.getVersion().isEmpty()) {
         resp.headers().set("Cache-Control", "public,max-age=" + defaultMaxAge);
         resp.headers().set("Expires", String.valueOf(now + defaultMaxAge * 1000));

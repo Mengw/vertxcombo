@@ -92,7 +92,7 @@ public class MinifyStyleUrl extends UrlStyle {
       }
     }
 
-    return new ExtractFileResult(afterBaseAppend, version, url).setMimeType();
+    return new ExtractFileResult(comboDiskRootPath, afterBaseAppend, version, url).setMimeType();
   }
 
   @Override
