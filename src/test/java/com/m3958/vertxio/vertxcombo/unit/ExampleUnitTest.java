@@ -15,6 +15,7 @@ import org.apache.tika.mime.MediaType;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
+import org.vertx.java.core.json.JsonObject;
 
 import com.m3958.vertxio.vertxcombo.ExtractFileResult;
 import com.m3958.vertxio.vertxcombo.MainVerticle;
@@ -28,6 +29,20 @@ import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
  * @author jianglibo@gmail.com
  */
 public class ExampleUnitTest {
+  
+  @Test
+  public void configTest(){
+    JsonObject config =
+        new JsonObject().putNumber("instance", 10);
+    
+    JsonObject config1 =
+        new JsonObject().putNumber("instance", 6);
+
+    config1.mergeIn(config);
+    
+    Assert.assertEquals(10, config1.getInteger("instance") + 0);
+    
+  }
 
 
   @Test
