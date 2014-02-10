@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 
 import org.vertx.java.core.logging.Logger;
 
+
 public class SingleFileUrl extends UrlStyle {
 
   // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js

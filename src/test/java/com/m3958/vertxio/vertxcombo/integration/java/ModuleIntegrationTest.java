@@ -39,36 +39,36 @@ import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
  */
 public class ModuleIntegrationTest extends TestVerticle {
 
-  //  @Test
-  //  public void testNonJsCss() {
-  //    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-  //    HttpClient client =
-  //        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
-  //            .setMaxPoolSize(10);
-  //
-  //    final Logger log = container.logger();
-  //
-  //    String url =
-  //        "/3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png";
-  //    log.info("start test url: " + url);
-  //    client.getNow(url, new TestComboResponseHandler(container));
-  //  }
-  //  
-  //  @Test
-  //  public void testNonJsCss1() {
-  //    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-  //    HttpClient client =
-  //        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
-  //            .setMaxPoolSize(10);
-  //
-  //    final Logger log = container.logger();
-  //
-  //    String url =
-  //        "/3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png?abcd";
-  //    log.info("start test url: " + url);
-  //    client.getNow(url, new TestComboResponseHandler(container));
-  //  }
-  //
+    @Test
+    public void testNonJsCss() {
+      Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+      HttpClient client =
+          vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
+              .setMaxPoolSize(10);
+  
+      final Logger log = container.logger();
+  
+      String url =
+          "/3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png";
+      log.info("start test url: " + url);
+      client.getNow(url, new SingleFileComboResponseHandler(container));
+    }
+    
+    @Test
+    public void testNonJsCss1() {
+      Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+      HttpClient client =
+          vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
+              .setMaxPoolSize(10);
+  
+      final Logger log = container.logger();
+  
+      String url =
+          "/3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png?abcd";
+      log.info("start test url: " + url);
+      client.getNow(url, new SingleFileComboResponseHandler(container));
+    }
+  
 
   @Test
   public void testMinifyComboHandler() {
@@ -80,7 +80,7 @@ public class ModuleIntegrationTest extends TestVerticle {
     final Logger log = container.logger();
 
     UrlStyle msu = new MinifyStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 10, "345");
+    String url = msu.generateRandomUrl("*.js", 10, "123");
     log.info("start test url: " + url);
     client.getNow(url, new TestComboResponseHandler(container));
   }
@@ -95,7 +95,7 @@ public class ModuleIntegrationTest extends TestVerticle {
     final Logger log = container.logger();
 
     UrlStyle msu = new YuiStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 10, "345");
+    String url = msu.generateRandomUrl("*.js", 10, "456");
     log.info("start test url: " + url);
     client.getNow(url, new TestComboResponseHandler(container));
   }
@@ -110,9 +110,9 @@ public class ModuleIntegrationTest extends TestVerticle {
     final Logger log = container.logger();
 
     UrlStyle msu = new SingleFileUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 10, "345");
+    String url = msu.generateRandomUrl("*.js", 10, "789");
     log.info("start test url: " + url);
-    client.getNow(url, new TestComboResponseHandler(container));
+    client.getNow(url, new SingleFileComboResponseHandler(container));
   }
 
   @Override

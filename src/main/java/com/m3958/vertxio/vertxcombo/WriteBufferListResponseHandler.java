@@ -56,5 +56,4 @@ public class WriteBufferListResponseHandler implements Handler<AsyncResult<Buffe
       resp.end();
     }
   }
-
 }

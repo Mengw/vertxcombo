@@ -37,6 +37,7 @@ public class ExtractFileResult {
 
   private Path comboDiskRootPath;
 
+
   public ExtractFileResult(Path comboDiskRootPath, VersionedFile[] files, String version, String url) {
     this.setFiles(files);
     this.setStatus(ResultStatus.SUCCESS);
@@ -161,5 +162,13 @@ public class ExtractFileResult {
       e.printStackTrace();
     }
     return null;
+  }
+
+  public Path getComboDiskRootPath() {
+    return comboDiskRootPath;
+  }
+
+  public void setComboDiskRootPath(Path comboDiskRootPath) {
+    this.comboDiskRootPath = comboDiskRootPath;
   }
 }

@@ -3,7 +3,6 @@ package com.m3958.vertxio.vertxcombo.unit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,19 +28,17 @@ import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
  * @author jianglibo@gmail.com
  */
 public class ExampleUnitTest {
-  
+
   @Test
-  public void configTest(){
-    JsonObject config =
-        new JsonObject().putNumber("instance", 10);
-    
-    JsonObject config1 =
-        new JsonObject().putNumber("instance", 6);
+  public void configTest() {
+    JsonObject config = new JsonObject().putNumber("instance", 10);
+
+    JsonObject config1 = new JsonObject().putNumber("instance", 6);
 
     config1.mergeIn(config);
-    
+
     Assert.assertEquals(10, config1.getInteger("instance") + 0);
-    
+
   }
 
 
@@ -76,19 +73,19 @@ public class ExampleUnitTest {
   // + fileTypeDetector.getClass().getCanonicalName());
   // }
 
-  //  @Test
-  //  public void testMimeType() {
-  //    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-  //    Path p =
-  //        Paths.get(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).resolve(
-  //            "3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png");
-  //    try {
-  //      String mimeType = Files.probeContentType(p);
-  //      Assert.assertEquals("image/png", mimeType);
-  //    } catch (IOException e) {
-  //      e.printStackTrace();
-  //    }
-  //  }
+  // @Test
+  // public void testMimeType() {
+  // Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
+  // Path p =
+  // Paths.get(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).resolve(
+  // "3.12.0/build/node-menunav/assets/skins/night/horizontal-menu-submenu-indicator.png");
+  // try {
+  // String mimeType = Files.probeContentType(p);
+  // Assert.assertEquals("image/png", mimeType);
+  // } catch (IOException e) {
+  // e.printStackTrace();
+  // }
+  // }
 
   @Test
   public void testOnefile() {

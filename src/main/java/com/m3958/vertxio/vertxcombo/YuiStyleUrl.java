@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.vertx.java.core.logging.Logger;
 
+
 public class YuiStyleUrl extends UrlStyle {
 
   // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js

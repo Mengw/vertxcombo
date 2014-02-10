@@ -2,6 +2,10 @@ package com.m3958.vertxio.vertxcombo;
 
 
 public abstract class UrlStyle {
+  
+  public static enum Style {
+    PHP_MINIFY,YUI_COMBO,SINGLE_FILE
+  }
 
   protected String sanitizeUrl(String originUrl) {
     if (originUrl.endsWith("?")) {

@@ -9,8 +9,9 @@ import org.vertx.java.core.http.HttpServerResponse;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.platform.Verticle;
 
-public class ComboHandlerVerticle extends Verticle {
+import com.m3958.vertxio.vertxcombo.UrlStyle.Style;
 
+public class ComboHandlerVerticle extends Verticle {
 
   public void start() {
 
@@ -40,33 +41,33 @@ public class ComboHandlerVerticle extends Verticle {
           return;
         }
 
-        String urlStyle = "";
+        Style urlStyle = Style.SINGLE_FILE;
         if (uri.startsWith("/min")) {
-          urlStyle = "phpMinify";
+          urlStyle = Style.PHP_MINIFY;
         } else if (uri.startsWith("/combo")) {
-          urlStyle = "yuiCombo";
-        } else {
-          urlStyle = "singleFile";
+          urlStyle = Style.YUI_COMBO;
         }
 
         boolean syncRead = config.getBoolean(MainVerticle.CFGKEY_SYNC_READ, false);
 
         ExtractFileResult efr = null;
         UrlStyle us = null;
-        if ("phpMinify".equals(urlStyle)) {
-          us = new MinifyStyleUrl(container.logger(), comboDiskRootPath.normalize());
-          efr = us.extractFiles(uri);
-        } else if ("yuiCombo".equals(urlStyle)) {
-          us = new YuiStyleUrl(container.logger(), comboDiskRootPath.normalize());
-          efr = us.extractFiles(uri);
-        } else if ("singleFile".equals(urlStyle)) {
-          us = new SingleFileUrl(container.logger(), comboDiskRootPath);
-          efr = us.extractFiles(uri);
-        } else {
-          resp.setStatusCode(HttpStatus.SC_NOT_FOUND);
-          resp.setStatusMessage("unrecogonized url style.");
-          resp.end();
-          return;
+        switch (urlStyle) {
+          case PHP_MINIFY:
+            us = new MinifyStyleUrl(container.logger(), comboDiskRootPath.normalize());
+            efr = us.extractFiles(uri);
+            break;
+          case YUI_COMBO:
+            us = new YuiStyleUrl(container.logger(), comboDiskRootPath.normalize());
+            efr = us.extractFiles(uri);
+            break;
+          case SINGLE_FILE:
+            us = new SingleFileUrl(container.logger(), comboDiskRootPath);
+            efr = us.extractFiles(uri);
+            new SingleFileProcessor(efr, container.logger(), config, req).process();
+            return;
+          default:
+            break;
         }
 
         final ExtractFileResult fefr = efr;
@@ -80,7 +81,6 @@ public class ComboHandlerVerticle extends Verticle {
               new CachedBufferAsync(vertx, new WriteBufferListResponseHandler(req, config, fefr),
                   comboDiskRootPath, efr.getFiles()).startRead();
             }
-
             break;
           default:
             resp.setStatusCode(HttpStatus.SC_NOT_FOUND);
