@@ -29,6 +29,7 @@ public class SingleFileProcessor {
     VersionedFile vf = efr.getFiles()[0];
     Path p = efr.getComboDiskRootPath().resolve(vf.getFile());
     log.info(efr.getMimeType());
+    req.response().headers().set("Content-Type", efr.getMimeType());
     req.response().sendFile(p.toString());
   }
 

@@ -100,7 +100,6 @@ public class ExtractFileResult {
     if (MIME_TYPES_UNKNOWN.equals(this.mimeType)) {
       setStatus(ResultStatus.UNKNOWN_MIMETYPE);
     }
-
     return this;
   }
 

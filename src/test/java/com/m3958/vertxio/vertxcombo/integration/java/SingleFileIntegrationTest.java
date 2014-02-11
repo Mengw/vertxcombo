@@ -1,19 +1,8 @@
 package com.m3958.vertxio.vertxcombo.integration.java;
 
 /*
- * Copyright 2013 Red Hat, Inc.
  * 
- * Red Hat licenses this file to you under the Apache License, version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- * 
- * @author <a href="http://tfox.org">Tim Fox</a>
+ * @author jianglibo@gmail.com
  */
 
 import static org.vertx.testtools.VertxAssert.assertNotNull;
@@ -30,17 +19,15 @@ import org.vertx.java.core.logging.Logger;
 import org.vertx.testtools.TestVerticle;
 
 import com.m3958.vertxio.vertxcombo.MainVerticle;
-import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
 import com.m3958.vertxio.vertxcombo.SingleFileUrl;
 import com.m3958.vertxio.vertxcombo.UrlStyle;
-import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
 
 /**
  */
-public class ModuleIntegrationTest extends TestVerticle {
+public class SingleFileIntegrationTest extends TestVerticle {
 
     @Test
-    public void testNonJsCss() {
+    public void testImg() {
       Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
       HttpClient client =
           vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
@@ -55,7 +42,7 @@ public class ModuleIntegrationTest extends TestVerticle {
     }
     
     @Test
-    public void testNonJsCss1() {
+    public void testVersionedImg() {
       Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
       HttpClient client =
           vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
@@ -71,36 +58,6 @@ public class ModuleIntegrationTest extends TestVerticle {
   
 
   @Test
-  public void testMinifyComboHandler() {
-    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-    HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
-            .setMaxPoolSize(10);
-
-    final Logger log = container.logger();
-
-    UrlStyle msu = new MinifyStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 10, "123");
-    log.info("start test url: " + url);
-    client.getNow(url, new TestComboResponseHandler(container));
-  }
-
-  @Test
-  public void testYuiComboHandler() {
-    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-    HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
-            .setMaxPoolSize(10);
-
-    final Logger log = container.logger();
-
-    UrlStyle msu = new YuiStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 10, "456");
-    log.info("start test url: " + url);
-    client.getNow(url, new TestComboResponseHandler(container));
-  }
-
-  @Test
   public void testSingleFielComboHandler() {
     Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
     HttpClient client =
@@ -110,7 +67,7 @@ public class ModuleIntegrationTest extends TestVerticle {
     final Logger log = container.logger();
 
     UrlStyle msu = new SingleFileUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 10, "789");
+    String url = msu.generateRandomUrl("*.js", 1, "789");
     log.info("start test url: " + url);
     client.getNow(url, new SingleFileComboResponseHandler(container));
   }
