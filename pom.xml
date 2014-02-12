@@ -5,7 +5,7 @@
 	<groupId>com.m3958.vertxio</groupId>
 	<artifactId>vertxcombo</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1.8-SNAPSHOT</version>
+	<version>0.0.1.7-SNAPSHOT</version>
 	<name>Project - vertxcombo</name>
 	<url>https://github.com/jianglibo/vertxcombo</url>
 	<description>
