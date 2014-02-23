@@ -3,6 +3,7 @@ package com.m3958.vertxio.vertxcombo;
 import java.nio.file.Path;
 
 import org.vertx.java.core.http.HttpServerRequest;
+import org.vertx.java.core.http.HttpServerResponse;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 
@@ -26,11 +27,22 @@ public class SingleFileProcessor {
   }
 
   public void process() {
-    VersionedFile vf = efr.getFiles()[0];
-    Path p = efr.getComboDiskRootPath().resolve(vf.getFile());
-    log.info(efr.getMimeType());
-    req.response().headers().set("Content-Type", efr.getMimeType());
-    req.response().sendFile(p.toString());
+    HttpServerResponse resp = req.response();
+    switch (efr.getStatus()) {
+      case SUCCESS:
+        VersionedFile vf = efr.getFiles()[0];
+        Path p = efr.getComboDiskRootPath().resolve(vf.getFile());
+        log.info(efr.getMimeType());
+        resp.headers().set("Content-Type", efr.getMimeType());
+        resp.sendFile(p.toString());
+        break;
+      default:
+        System.out.println("start default");
+        resp.setStatusCode(HttpStatus.SC_NOT_FOUND);
+        resp.setStatusMessage(efr.getStatus().toString());
+        resp.end();
+        break;
+    }
   }
 
   public ExtractFileResult getEfr() {

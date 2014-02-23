@@ -12,18 +12,13 @@ import org.vertx.java.core.logging.Logger;
 public class YuiStyleUrl extends UrlStyle {
 
   // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js
-  private Logger logger;
-
-  private Path comboDiskRootPath;
 
   public YuiStyleUrl(Logger logger, Path comboDiskRootPath) {
-    this.logger = logger;
-    this.comboDiskRootPath = comboDiskRootPath;
+    super(logger, comboDiskRootPath);
   }
 
   public YuiStyleUrl(Logger logger, String comboDiskRootPath) {
-    this.logger = logger;
-    this.comboDiskRootPath = Paths.get(comboDiskRootPath);
+    super(logger, comboDiskRootPath);
   }
 
   @Override
@@ -55,12 +50,13 @@ public class YuiStyleUrl extends UrlStyle {
       sanitizedPathes[i] = Paths.get(fn);
     }
 
-    for (Path fp : sanitizedPathes) {
-      if (!comboDiskRootPath.resolve(fp).startsWith(comboDiskRootPath)) {
-        return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
-      }
+
+    if (testExists(sanitizedPathes)) {
+      return new ExtractFileResult(comboDiskRootPath, sanitizedPathes, version, url).setMimeType();
+    } else {
+      return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
     }
-    return new ExtractFileResult(comboDiskRootPath, sanitizedPathes, version, url).setMimeType();
+
   }
 
   @Override

@@ -64,6 +64,7 @@ public class ComboHandlerVerticle extends Verticle {
           case SINGLE_FILE:
             us = new SingleFileUrl(container.logger(), comboDiskRootPath);
             efr = us.extractFiles(uri);
+            container.logger().info("singlefile");
             new SingleFileProcessor(efr, container.logger(), config, req).process();
             return;
           default:
@@ -83,6 +84,7 @@ public class ComboHandlerVerticle extends Verticle {
             }
             break;
           default:
+            System.out.println("start default");
             resp.setStatusCode(HttpStatus.SC_NOT_FOUND);
             resp.setStatusMessage(efr.getStatus().toString());
             resp.end();

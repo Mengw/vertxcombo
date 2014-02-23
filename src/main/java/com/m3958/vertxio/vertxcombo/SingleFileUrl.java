@@ -11,18 +11,13 @@ import org.vertx.java.core.logging.Logger;
 public class SingleFileUrl extends UrlStyle {
 
   // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js
-  private Logger logger;
-
-  private Path comboDiskRootPath;
 
   public SingleFileUrl(Logger logger, Path comboDiskRootPath) {
-    this.logger = logger;
-    this.comboDiskRootPath = comboDiskRootPath;
+    super(logger, comboDiskRootPath);
   }
 
   public SingleFileUrl(Logger logger, String comboDiskRootPath) {
-    this.logger = logger;
-    this.comboDiskRootPath = Paths.get(comboDiskRootPath);
+    super(logger, comboDiskRootPath);
   }
 
   @Override
@@ -61,7 +56,12 @@ public class SingleFileUrl extends UrlStyle {
         return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
       }
     }
-    return new ExtractFileResult(comboDiskRootPath, sanitizedPathes, version, url).setMimeType();
+
+    if (testExists(sanitizedPathes)) {
+      return new ExtractFileResult(comboDiskRootPath, sanitizedPathes, version, url).setMimeType();
+    } else {
+      return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
+    }
   }
 
   @Override

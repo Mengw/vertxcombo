@@ -12,18 +12,13 @@ public class MinifyStyleUrl extends UrlStyle {
 
   // http://yuimin.fh.gov.cn/min/f=/pure/0.2.0/build/pure-min.css,/neverchange/bootstrap/2.3.2/css/bootstrap.min.css&5566
   // http://yuimin.fh.gov.cn/min/b=3.13.0/build&130727&f=/cssgrids/cssgrids-min.css,/cssnormalize-context/cssnormalize-context-min.css
-  private Logger logger;
-
-  private Path comboDiskRootPath;
 
   public MinifyStyleUrl(Logger logger, Path comboDiskRootPath) {
-    this.logger = logger;
-    this.comboDiskRootPath = comboDiskRootPath;
+    super(logger, comboDiskRootPath);
   }
 
   public MinifyStyleUrl(Logger logger, String comboDiskRootPath) {
-    this.logger = logger;
-    this.comboDiskRootPath = Paths.get(comboDiskRootPath);
+    super(logger, comboDiskRootPath);
   }
 
   @Override
@@ -86,13 +81,11 @@ public class MinifyStyleUrl extends UrlStyle {
       afterBaseAppend = sanitizedPathes;
     }
 
-    for (Path fp : afterBaseAppend) {
-      if (!comboDiskRootPath.resolve(fp).startsWith(comboDiskRootPath)) {
-        return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
-      }
+    if(testExists(afterBaseAppend)){
+      return new ExtractFileResult(comboDiskRootPath, afterBaseAppend, version, url).setMimeType();
+    }else{
+      return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
     }
-
-    return new ExtractFileResult(comboDiskRootPath, afterBaseAppend, version, url).setMimeType();
   }
 
   @Override
