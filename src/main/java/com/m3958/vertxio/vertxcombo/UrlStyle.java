@@ -3,6 +3,7 @@ package com.m3958.vertxio.vertxcombo;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.vertx.java.core.file.FileSystem;
 import org.vertx.java.core.logging.Logger;
 
 
@@ -16,13 +17,17 @@ public abstract class UrlStyle {
 
   protected Path comboDiskRootPath;
 
-  public UrlStyle(Logger logger, Path comboDiskRootPath) {
+  protected FileSystem fileSystem;
+
+  public UrlStyle(FileSystem fileSystem, Logger logger, Path comboDiskRootPath) {
     this.logger = logger;
+    this.fileSystem = fileSystem;
     this.comboDiskRootPath = comboDiskRootPath;
   }
 
-  public UrlStyle(Logger logger, String comboDiskRootPath) {
+  public UrlStyle(FileSystem fileSystem, Logger logger, String comboDiskRootPath) {
     this.logger = logger;
+    this.fileSystem = fileSystem;
     this.comboDiskRootPath = Paths.get(comboDiskRootPath);
   }
 
@@ -43,13 +48,9 @@ public abstract class UrlStyle {
     if (pathes == null || pathes.length == 0) {
       return false;
     }
-    Path realPath;
     for (Path p : pathes) {
-      realPath = comboDiskRootPath.resolve(p); 
-      if (!realPath.startsWith(comboDiskRootPath)) {
-        return false;
-      }
-      if (!realPath.toFile().exists() || !realPath.toFile().isFile()) {
+      String fn = p.toString();
+      if(!fileSystem.existsSync(fn) || fileSystem.propsSync(fn).isDirectory()){
         return false;
       }
     }

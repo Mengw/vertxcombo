@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.vertx.java.core.file.FileSystem;
 import org.vertx.java.core.logging.Logger;
 
 public class MinifyStyleUrl extends UrlStyle {
@@ -13,12 +14,12 @@ public class MinifyStyleUrl extends UrlStyle {
   // http://yuimin.fh.gov.cn/min/f=/pure/0.2.0/build/pure-min.css,/neverchange/bootstrap/2.3.2/css/bootstrap.min.css&5566
   // http://yuimin.fh.gov.cn/min/b=3.13.0/build&130727&f=/cssgrids/cssgrids-min.css,/cssnormalize-context/cssnormalize-context-min.css
 
-  public MinifyStyleUrl(Logger logger, Path comboDiskRootPath) {
-    super(logger, comboDiskRootPath);
+  public MinifyStyleUrl(FileSystem fileSystem, Logger logger, Path comboDiskRootPath) {
+    super(fileSystem, logger, comboDiskRootPath);
   }
 
-  public MinifyStyleUrl(Logger logger, String comboDiskRootPath) {
-    super(logger, comboDiskRootPath);
+  public MinifyStyleUrl(FileSystem fileSystem, Logger logger, String comboDiskRootPath) {
+    super(fileSystem, logger, comboDiskRootPath);
   }
 
   @Override
@@ -80,10 +81,16 @@ public class MinifyStyleUrl extends UrlStyle {
     if (afterBaseAppend == null) {
       afterBaseAppend = sanitizedPathes;
     }
+    
+    Path[] fullPaths = new Path[afterBaseAppend.length];
+    
+    for(int i=0;i<afterBaseAppend.length;i++){
+      fullPaths[i] = comboDiskRootPath.resolve(afterBaseAppend[i]);
+    }
 
-    if(testExists(afterBaseAppend)){
-      return new ExtractFileResult(comboDiskRootPath, afterBaseAppend, version, url).setMimeType();
-    }else{
+    if (testExists(fullPaths)) {
+      return new ExtractFileResult(fullPaths, version, url).setMimeType();
+    } else {
       return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
     }
   }

@@ -6,7 +6,6 @@ import java.nio.file.Path;
 
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.detect.Detector;
-import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 
@@ -35,18 +34,19 @@ public class ExtractFileResult {
 
   private String url;
 
-  private Path comboDiskRootPath;
+  private int current = 0;
 
+  private int total;
 
-  public ExtractFileResult(Path comboDiskRootPath, VersionedFile[] files, String version, String url) {
+  public ExtractFileResult(VersionedFile[] files, String version, String url) {
     this.setFiles(files);
     this.setStatus(ResultStatus.SUCCESS);
     this.setUrl(url);
     this.setVersion(version);
-    this.comboDiskRootPath = comboDiskRootPath;
+    this.total = files.length;
   }
 
-  public ExtractFileResult(Path comboDiskRootPath, Path[] paths, String version, String url) {
+  public ExtractFileResult(Path[] paths, String version, String url) {
     this.files = new VersionedFile[paths.length];
     for (int idx = 0; idx < paths.length; idx++) {
       this.files[idx] = new VersionedFile(paths[idx], version);
@@ -54,7 +54,7 @@ public class ExtractFileResult {
     this.setStatus(ResultStatus.SUCCESS);
     this.setVersion(version);
     this.setUrl(url);
-    this.comboDiskRootPath = comboDiskRootPath;
+    this.total = paths.length;
   }
 
   public ExtractFileResult(ResultStatus status) {
@@ -137,7 +137,7 @@ public class ExtractFileResult {
     } else if (".json".equalsIgnoreCase(MIME_TYPES_JSON)) {
       mimeType = MIME_TYPES_JSON + "; charset=UTF-8";
     } else {
-      mimeType = tikaProbe(comboDiskRootPath.resolve(getFiles()[0].getFile()));
+      mimeType = tikaProbe(getFiles()[0].getFile());
     }
     if (mimeType == null) {
       mimeType = MIME_TYPES_UNKNOWN;
@@ -150,10 +150,9 @@ public class ExtractFileResult {
     Detector detector = config.getDetector();
 
     try {
-      TikaInputStream stream = TikaInputStream.get(p.toFile());
       Metadata metadata = new Metadata();
       metadata.add(Metadata.RESOURCE_NAME_KEY, p.toString());
-      MediaType mediaType = detector.detect(stream, metadata);
+      MediaType mediaType = detector.detect(null, metadata);
       return mediaType.toString();
     } catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -163,11 +162,15 @@ public class ExtractFileResult {
     return null;
   }
 
-  public Path getComboDiskRootPath() {
-    return comboDiskRootPath;
+  public VersionedFile getNext() {
+    if (total > current) {
+      return getFiles()[current++];
+    } else {
+      return null;
+    }
   }
-
-  public void setComboDiskRootPath(Path comboDiskRootPath) {
-    this.comboDiskRootPath = comboDiskRootPath;
+  
+  public boolean isLast(){
+    return !(total > current);
   }
 }

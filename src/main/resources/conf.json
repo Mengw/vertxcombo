@@ -1,0 +1,10 @@
+{
+    "comboDiskRoot" : "fixtures",
+    "syncRead" : false,
+    "maxMem" : 67108864,
+    "defaultMaxAge" : 600,
+    "versionedMaxAge" : 31536000,
+    "listenPort" : 8093,
+    "instances" : 1,
+    "charset" : "UTF-8"
+}

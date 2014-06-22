@@ -7,55 +7,90 @@ package com.m3958.vertxio.vertxcombo.integration.java;
 
 import static org.vertx.testtools.VertxAssert.assertNotNull;
 import static org.vertx.testtools.VertxAssert.assertTrue;
+import static org.vertx.testtools.VertxAssert.testComplete;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.util.EntityUtils;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
-import org.vertx.java.core.http.HttpClient;
-import org.vertx.java.core.logging.Logger;
+import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 
 import com.m3958.vertxio.vertxcombo.MainVerticle;
-import com.m3958.vertxio.vertxcombo.MinifyStyleUrl;
-import com.m3958.vertxio.vertxcombo.UrlStyle;
+import com.m3958.vertxio.vertxcombo.utils.Utils;
 
 /**
  */
 public class MinifyStyleIntegrationTest extends TestVerticle {
 
   @Test
-  public void testMinifyComboHandler10() {
-    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-    HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
-            .setMaxPoolSize(10);
+  public void testMinifyComboHandler10() throws ClientProtocolException, IOException {
 
-    final Logger log = container.logger();
+    JsonObject config = new JsonObject(Utils.readResouce("/conf.json"));
 
-    UrlStyle msu = new MinifyStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 10, "123");
-    log.info("start test url: " + url);
-    client.getNow(url, new TestComboResponseHandler(container));
+    Assume.assumeTrue(new File(config.getString(MainVerticle.CFGKEY_COMBO_DISK_ROOT)).exists());
+    StringBuilder sb = com.m3958.vertxio.vertxcombo.integration.java.Utils.getUrlBeforPath(config);
+
+    sb.append("/min/f=a.js,b.js");
+
+    HttpResponse res = Request.Get(sb.toString()).execute().returnResponse();
+    com.m3958.vertxio.vertxcombo.integration.java.Utils.checkHeaders(res);
+    HttpEntity entity = res.getEntity();
+    Assert.assertEquals("ab", EntityUtils.toString(entity));
+    Assert.assertEquals("public,max-age=600", res.getLastHeader("Cache-Control").getValue());
+    
+    testComplete();
+  }
+
+  @Test
+  public void testMinifyComboHandler1() throws ClientProtocolException, IOException {
+    JsonObject config = new JsonObject(Utils.readResouce("/conf.json"));
+
+    Assume.assumeTrue(new File(config.getString(MainVerticle.CFGKEY_COMBO_DISK_ROOT)).exists());
+
+    StringBuilder sb = com.m3958.vertxio.vertxcombo.integration.java.Utils.getUrlBeforPath(config);
+
+    sb.append("/min/b=3.13.0/build&f=a.js,b.js");
+
+    HttpResponse res = Request.Get(sb.toString()).execute().returnResponse();
+    com.m3958.vertxio.vertxcombo.integration.java.Utils.checkHeaders(res);
+    HttpEntity entity = res.getEntity();
+    Assert.assertEquals("ab", EntityUtils.toString(entity));
+    Assert.assertEquals("public,max-age=600", res.getLastHeader("Cache-Control").getValue());
+    
+    testComplete();
   }
   
   @Test
-  public void testMinifyComboHandler1() {
-    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-    HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
-            .setMaxPoolSize(10);
+  public void testMinifyComboHandler2() throws ClientProtocolException, IOException {
+    JsonObject config = new JsonObject(Utils.readResouce("/conf.json"));
 
-    final Logger log = container.logger();
+    Assume.assumeTrue(new File(config.getString(MainVerticle.CFGKEY_COMBO_DISK_ROOT)).exists());
 
-    UrlStyle msu = new MinifyStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 1, "123");
-    log.info("start test url: " + url);
-    client.getNow(url, new TestComboResponseHandler(container));
+    StringBuilder sb = com.m3958.vertxio.vertxcombo.integration.java.Utils.getUrlBeforPath(config);
+
+    sb.append("/min/b=3.13.0/build&f=a.js,b.js&4455");
+
+    HttpResponse res = Request.Get(sb.toString()).execute().returnResponse();
+    com.m3958.vertxio.vertxcombo.integration.java.Utils.checkHeaders(res);
+    HttpEntity entity = res.getEntity();
+    Assert.assertEquals("ab", EntityUtils.toString(entity));
+    Assert.assertEquals("public,max-age=31536000", res.getLastHeader("Cache-Control").getValue());
+    
+    testComplete();
   }
-
+  
+  
+  
 
   @Override
   public void start() {

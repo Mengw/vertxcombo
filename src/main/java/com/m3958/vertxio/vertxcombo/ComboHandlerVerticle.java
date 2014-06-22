@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.vertx.java.core.Handler;
+import org.vertx.java.core.file.FileSystem;
 import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.HttpServerResponse;
 import org.vertx.java.core.json.JsonObject;
@@ -16,6 +17,8 @@ public class ComboHandlerVerticle extends Verticle {
   public void start() {
 
     final JsonObject config = container.config();
+
+    final FileSystem fileSystem = vertx.fileSystem();
 
     vertx.createHttpServer().requestHandler(new Handler<HttpServerRequest>() {
 
@@ -48,25 +51,21 @@ public class ComboHandlerVerticle extends Verticle {
           urlStyle = Style.YUI_COMBO;
         }
 
-        boolean syncRead = config.getBoolean(MainVerticle.CFGKEY_SYNC_READ, false);
-
         ExtractFileResult efr = null;
         UrlStyle us = null;
         switch (urlStyle) {
           case PHP_MINIFY:
-            us = new MinifyStyleUrl(container.logger(), comboDiskRootPath.normalize());
+            us = new MinifyStyleUrl(fileSystem, container.logger(), comboDiskRootPath.normalize());
             efr = us.extractFiles(uri);
             break;
           case YUI_COMBO:
-            us = new YuiStyleUrl(container.logger(), comboDiskRootPath.normalize());
+            us = new YuiStyleUrl(fileSystem, container.logger(), comboDiskRootPath.normalize());
             efr = us.extractFiles(uri);
             break;
           case SINGLE_FILE:
-            us = new SingleFileUrl(container.logger(), comboDiskRootPath);
+            us = new SingleFileUrl(fileSystem, container.logger(), comboDiskRootPath);
             efr = us.extractFiles(uri);
-            container.logger().info("singlefile");
-            new SingleFileProcessor(efr, container.logger(), config, req).process();
-            return;
+            break;
           default:
             break;
         }
@@ -75,13 +74,7 @@ public class ComboHandlerVerticle extends Verticle {
 
         switch (fefr.getStatus()) {
           case SUCCESS:
-            if (syncRead) {
-              new CachedBufferSync(vertx, new WriteBufferListResponseHandler(req, config, fefr),
-                  comboDiskRootPath, efr.getFiles()).startRead();
-            } else {
-              new CachedBufferAsync(vertx, new WriteBufferListResponseHandler(req, config, fefr),
-                  comboDiskRootPath, efr.getFiles()).startRead();
-            }
+            new MutiFileSender(efr, fileSystem, container.logger(), req, config).send();
             break;
           default:
             System.out.println("start default");

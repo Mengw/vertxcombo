@@ -3,9 +3,9 @@ package com.m3958.vertxio.vertxcombo;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
+import org.vertx.java.core.file.FileSystem;
 import org.vertx.java.core.logging.Logger;
 
 
@@ -13,12 +13,12 @@ public class YuiStyleUrl extends UrlStyle {
 
   // http://yui.yahooapis.com/combo?3.14.1/event-mouseenter/event-mouseenter-min.js&3.14.1/event-hover/event-hover-min.js
 
-  public YuiStyleUrl(Logger logger, Path comboDiskRootPath) {
-    super(logger, comboDiskRootPath);
+  public YuiStyleUrl(FileSystem fileSystem, Logger logger, Path comboDiskRootPath) {
+    super(fileSystem, logger, comboDiskRootPath);
   }
 
-  public YuiStyleUrl(Logger logger, String comboDiskRootPath) {
-    super(logger, comboDiskRootPath);
+  public YuiStyleUrl(FileSystem fileSystem, Logger logger, String comboDiskRootPath) {
+    super(fileSystem, logger, comboDiskRootPath);
   }
 
   @Override
@@ -47,12 +47,12 @@ public class YuiStyleUrl extends UrlStyle {
       if (fn.charAt(0) == fsep) {
         fn = fn.substring(1);
       }
-      sanitizedPathes[i] = Paths.get(fn);
+      sanitizedPathes[i] = comboDiskRootPath.resolve(fn);
     }
 
 
     if (testExists(sanitizedPathes)) {
-      return new ExtractFileResult(comboDiskRootPath, sanitizedPathes, version, url).setMimeType();
+      return new ExtractFileResult(sanitizedPathes, version, url).setMimeType();
     } else {
       return new ExtractFileResult(ExtractFileResult.ResultStatus.FILE_NOT_FOUND);
     }

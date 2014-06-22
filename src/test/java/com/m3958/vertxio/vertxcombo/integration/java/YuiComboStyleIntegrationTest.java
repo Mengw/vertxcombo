@@ -7,54 +7,83 @@ package com.m3958.vertxio.vertxcombo.integration.java;
 
 import static org.vertx.testtools.VertxAssert.assertNotNull;
 import static org.vertx.testtools.VertxAssert.assertTrue;
+import static org.vertx.testtools.VertxAssert.testComplete;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.util.EntityUtils;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
-import org.vertx.java.core.http.HttpClient;
-import org.vertx.java.core.logging.Logger;
+import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 
 import com.m3958.vertxio.vertxcombo.MainVerticle;
-import com.m3958.vertxio.vertxcombo.UrlStyle;
-import com.m3958.vertxio.vertxcombo.YuiStyleUrl;
+import com.m3958.vertxio.vertxcombo.utils.Utils;
 
 /**
+ * yui combo always has long expire.
  */
 public class YuiComboStyleIntegrationTest extends TestVerticle {
 
- 
+
   @Test
-  public void testYuiComboHandler10() {
-    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-    HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
-            .setMaxPoolSize(10);
-
-    final Logger log = container.logger();
-
-    UrlStyle msu = new YuiStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 10, "456");
-    log.info("start test url: " + url);
-    client.getNow(url, new TestComboResponseHandler(container));
+  public void testYuiComboHandler10() throws ClientProtocolException, IOException,
+      URISyntaxException {
+    JsonObject config = new JsonObject(Utils.readResouce("/conf.json"));
+    Assume.assumeTrue(new File(config.getString(MainVerticle.CFGKEY_COMBO_DISK_ROOT)).exists());
+    StringBuilder sb = com.m3958.vertxio.vertxcombo.integration.java.Utils.getUrlBeforPath(config);
+    sb.append("/combo?a.js&b.js");
+    
+    HttpResponse res = Request.Get(sb.toString()).execute().returnResponse();
+    com.m3958.vertxio.vertxcombo.integration.java.Utils.checkHeaders(res);
+    HttpEntity entity = res.getEntity();
+    Assert.assertEquals("ab", EntityUtils.toString(entity));
+    Assert.assertEquals("application/javascript; charset=UTF-8", entity.getContentType().getValue());
+    Assert.assertEquals("public,max-age=31536000", res.getLastHeader("Cache-Control").getValue());
+    testComplete();
   }
   
   @Test
-  public void testYuiComboHandler1() {
-    Assume.assumeTrue(new File(MainVerticle.CFGVALUE_COMBO_DISK_ROOT).exists());
-    HttpClient client =
-        vertx.createHttpClient().setPort(MainVerticle.CFGVALUE_LISTEN_PORT).setHost("localhost")
-            .setMaxPoolSize(10);
-
-    final Logger log = container.logger();
-
-    UrlStyle msu = new YuiStyleUrl(log, MainVerticle.CFGVALUE_COMBO_DISK_ROOT);
-    String url = msu.generateRandomUrl("*.js", 1, "456");
-    log.info("start test url: " + url);
-    client.getNow(url, new TestComboResponseHandler(container));
+  public void testYuiComboHandler1() throws ClientProtocolException, IOException,
+      URISyntaxException {
+    JsonObject config = new JsonObject(Utils.readResouce("/conf.json"));
+    Assume.assumeTrue(new File(config.getString(MainVerticle.CFGKEY_COMBO_DISK_ROOT)).exists());
+    StringBuilder sb = com.m3958.vertxio.vertxcombo.integration.java.Utils.getUrlBeforPath(config);
+    sb.append("/combo/5566?a.js&b.js");
+    
+    HttpResponse res = Request.Get(sb.toString()).execute().returnResponse();
+    com.m3958.vertxio.vertxcombo.integration.java.Utils.checkHeaders(res);
+    HttpEntity entity = res.getEntity();
+    Assert.assertEquals("ab", EntityUtils.toString(entity));
+    Assert.assertEquals("application/javascript; charset=UTF-8", entity.getContentType().getValue());
+    Assert.assertEquals("public,max-age=31536000", res.getLastHeader("Cache-Control").getValue());
+    testComplete();
+  }
+  
+  @Test
+  public void testYuiComboHandler2() throws ClientProtocolException, IOException,
+      URISyntaxException {
+    JsonObject config = new JsonObject(Utils.readResouce("/conf.json"));
+    Assume.assumeTrue(new File(config.getString(MainVerticle.CFGKEY_COMBO_DISK_ROOT)).exists());
+    StringBuilder sb = com.m3958.vertxio.vertxcombo.integration.java.Utils.getUrlBeforPath(config);
+    sb.append("/combo/5566?a.css&b.css");
+    
+    HttpResponse res = Request.Get(sb.toString()).execute().returnResponse();
+    com.m3958.vertxio.vertxcombo.integration.java.Utils.checkHeaders(res);
+    HttpEntity entity = res.getEntity();
+    Assert.assertEquals("ab", EntityUtils.toString(entity));
+    Assert.assertEquals("text/css; charset=UTF-8", entity.getContentType().getValue());
+    Assert.assertEquals("public,max-age=31536000", res.getLastHeader("Cache-Control").getValue());
+    testComplete();
   }
 
 
