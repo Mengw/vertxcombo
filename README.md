@@ -8,9 +8,11 @@ it will be continuous improvement when I know more about vertx and java asynchro
 
 Now has dockerlized images，just run：
 
-docker run -d -p 8998:8093 -e "appversion=0.0.2" --name vertxcombo jianglibo/vertxcombo /opt/run.sh
+docker run -d -p 8998:8093 --name vertxcombo jianglibo/vertxcombo /opt/run.sh
 
 If you want another conf.json file just add: -e "appconfig=http://some.reachable.url/vertxcomboconf.json", run.sh will download this config file automaticly.
+
+if vertxcombo has new version release,you can add: -e "appversion=0.0.xx",to run newest vertxcombo.
 
 Imags is a little big,because I packed many yuilibrary version in images.
 
