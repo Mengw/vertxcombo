@@ -3,6 +3,20 @@
 It's a simple Combo Handler.
 
 it will be continuous improvement when I know more about vertx and java asynchronous.
+
+##Dockerlized
+
+Now has dockerlized images，just run：
+
+docker run -d -p 8998:8093 -e "appversion=0.0.2" --name vertxcombo jianglibo/vertxcombo /opt/run.sh
+
+If you want another conf.json file just add: -e "appconfig=http://some.reachable.url/vertxcomboconf.json", run.sh will download this config file automaticly.
+
+Imags is a little big,because I packed many yuilibrary version in images.
+
+If you need add your own files to be combined,just run into bash container,then add you files to /opt/staticyui, then commit docker container,then start with command shown above.
+
+
 ##Usage
 
 create a config file named conf.json in any folder,write content bellow:
@@ -38,6 +52,4 @@ if url contains a version number, an etag base on url will be send. max-age can 
 
 
 ##中文说明
-这不是一个通用的combo handler，因为所有被请求的文件都缓存在内存里面，所以您必须预先知道需要合并的文件的大小。
-它也许很快，不过未经测试，如果您有时间测试，将非常欢迎。
 
