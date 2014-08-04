@@ -16,7 +16,7 @@ if vertxcombo has new version release,you can add: -e "appversion=0.0.xx",to run
 
 Imags is a little big,because I packed many yuilibrary version in images.
 
-If you need add your own files to be combined,just run into bash container,then add you files to /opt/staticyui, then commit docker container,then start with command shown above.
+If you need add your own files to be combined,just run into bash container:docker -it --name="vertxcombo" jianglibo/vertxcombo /bin/bash, then add you files to /opt/staticyui, then commit docker container,then start with command shown above.
 
 
 ##Usage
